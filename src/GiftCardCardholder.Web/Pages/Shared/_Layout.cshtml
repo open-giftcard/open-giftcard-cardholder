@@ -1,0 +1,124 @@
+@using System.Globalization
+@{
+  var culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+  var returnUrl = Context.Request.PathBase + Context.Request.Path + Context.Request.QueryString;
+  var currentLabel = culture == "tr" ? "Türkçe" : "English";
+  var alternateCulture = culture == "tr" ? "en" : "tr";
+  var alternateLabel = culture == "tr" ? "English" : "Türkçe";
+  var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+
+  @* No script runs here, so the theme is stamped server-side from the cookie.
+     "system" is stamped rather than omitted so the attribute always says which
+     of the three states is in force; the stylesheet has no rule for it, which
+     is how the device preference stays in charge. *@
+  var theme = Context.Request.Cookies["giftcard_theme"];
+  if (theme is not "light" and not "dark")
+  {
+    theme = "system";
+  }
+}
+<!DOCTYPE html>
+<html lang="@culture" data-theme="@theme">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>@ViewData["Title"] — @Text["Gift Card"]</title>
+  <link rel="stylesheet" href="~/css/app.css" />
+  <link rel="icon" href="~/logo.svg" type="image/svg+xml" />
+</head>
+<body>
+  <a class="skip-link" href="#main">@Text["Skip to content"]</a>
+  <header class="app-header">
+    @* The mark is the way home, which is what people expect of a logo. *@
+    <a class="brand" asp-page="/Cards" aria-label="@Text["My cards"]">
+      <img class="brand-logo" src="~/logo.svg" alt="Gift Card Platform" width="52" height="20" />
+      <span class="brand-muted">@Text["Gift Card"]</span>
+    </a>
+    @*
+      Collapsed to the current setting, opening onto the other two. <details>
+      is used rather than a checkbox because it is the one disclosure the
+      platform gives us for free: keyboard, Escape, and screen-reader state all
+      work without the JavaScript this application does not ship.
+    *@
+    <div class="settings">
+      <details class="menu">
+        <summary class="chip" title="@Text["Appearance"]">
+          @if (theme == "light")
+          {
+            <partial name="_ThemeIcon" model="@("light")" />
+          }
+          else if (theme == "dark")
+          {
+            <partial name="_ThemeIcon" model="@("dark")" />
+          }
+          else
+          {
+            <partial name="_ThemeIcon" model="@("system")" />
+          }
+          <span class="visually-hidden">@Text["Appearance"]</span>
+        </summary>
+        <form method="post" asp-page="/Theme" class="menu__panel" aria-label="@Text["Appearance"]">
+          <input type="hidden" name="returnUrl" value="@returnUrl" />
+          <button type="submit" name="theme" value="light"
+                  class="menu__item @(theme == "light" ? "menu__item--on" : "")">
+            <partial name="_ThemeIcon" model="@("light")" />
+            <span>@Text["Light"]</span>
+          </button>
+          <button type="submit" name="theme" value="dark"
+                  class="menu__item @(theme == "dark" ? "menu__item--on" : "")">
+            <partial name="_ThemeIcon" model="@("dark")" />
+            <span>@Text["Dark"]</span>
+          </button>
+          <button type="submit" name="theme" value="system"
+                  class="menu__item @(theme == "system" ? "menu__item--on" : "")">
+            <partial name="_ThemeIcon" model="@("system")" />
+            <span>@Text["Match my device"]</span>
+          </button>
+        </form>
+      </details>
+
+      @*
+        The chip reads as the language you are in, matching the appearance chip
+        beside it, which also shows the setting in force rather than the one you
+        would move to. Naming the destination instead was read as a claim about
+        the current state: a Turkish page labelled "English" looks like a page
+        that thinks it is English.
+
+        Which means the visible word no longer says what the button does, so the
+        accessible name has to. The label changes with the language but the
+        control must not move, so the button is a fixed width that fits either
+        word.
+      *@
+      <form method="post" asp-page="/Language" class="chip-form">
+        <input type="hidden" name="culture" value="@alternateCulture" />
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <button type="submit" class="chip chip--language language-switch"
+                title="@Text["Switch to {0}", alternateLabel]">
+          <partial name="_Flag" model="@culture" />
+          <span lang="@culture" aria-hidden="true">@currentLabel</span>
+          <span class="visually-hidden">@Text["Switch to {0}", alternateLabel]</span>
+        </button>
+      </form>
+    </div>
+    @if (ViewData["ShowSignOut"] is true)
+    {
+      <nav class="header-nav" aria-label="@Text["Account navigation"]">
+        <a asp-page="/Cards" class="nav-btn @(currentPage == "/Cards" ? "nav-btn--active" : "")">@Text["My cards"]</a>
+        <a asp-page="/Shares" class="nav-btn @(currentPage == "/Shares" ? "nav-btn--active" : "")">@Text["Sharing"]</a>
+      </nav>
+      <form method="post" asp-page="/SignOut" class="header-form">
+        <button type="submit" class="signout-btn">@Text["Sign out"]</button>
+      </form>
+    }
+  </header>
+
+  <main id="main" class="app-main" tabindex="-1">
+    @RenderBody()
+  </main>
+
+  <footer class="app-footer">
+    <p>@Text["Your gift card balance is held by the platform. Keep your activation link private."]</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,106 @@
+@*
+  The optional identifier is what makes a live checkout code addressable by a
+  GET, so changing language, changing theme, reloading, or going back all keep
+  it. The literal "status" segment of the frame's route is matched ahead of a
+  parameter and could not be a GUID in any case.
+*@
+@page "/cards/{giftCardId:guid}/pay/{paymentTokenId:guid?}"
+@model PaymentModel
+@{
+  ViewData["Title"] = Text["Pay with gift card"];
+}
+
+<a class="back-link" asp-page="/Card" asp-route-giftCardId="@RouteData.Values["giftCardId"]">
+  ← @Text["Gift card details"]
+</a>
+
+<h1>@Text["Pay with gift card"]</h1>
+
+@if (Model.ErrorMessage is not null)
+{
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+}
+
+@if (Model.Credential is null)
+{
+  <section class="panel" aria-labelledby="payment-start-heading">
+    <h2 id="payment-start-heading">@Text["Create a checkout code"]</h2>
+    <p>@Text["Generate the code only when the cashier is ready. It expires after 60 seconds and can be used once."]</p>
+    <form method="post" asp-route-giftCardId="@RouteData.Values["giftCardId"]">
+      <button type="submit" class="button">@Text["Generate payment code"]</button>
+    </form>
+  </section>
+}
+else
+{
+  <section class="panel payment-credential" aria-labelledby="payment-ready-heading">
+    <h2 id="payment-ready-heading">@Text["Your checkout code"]</h2>
+    <p class="card-reference">@Model.Credential.GiftCardPublicReference</p>
+
+    <div class="payment-code-stage @Model.CountdownOffsetClass">
+      <img class="payment-qr"
+           src="@Model.QrCodeDataUri"
+           alt="@Text["QR payment code for {0}", Model.Credential.GiftCardPublicReference]" />
+      <form class="payment-code-renew"
+            method="post"
+            asp-page="/Payment"
+            asp-route-giftCardId="@Model.Credential.GiftCardId"
+            asp-route-paymentTokenId="">
+        <strong>@Text["Payment code expired"]</strong>
+        <button type="submit" class="button">@Text["Generate new payment code"]</button>
+      </form>
+    </div>
+
+    @*
+      A 60-second animated ring with the seconds remaining counting down inside
+      it. Both are offset by the code's real age so a reload shows the time that
+      is actually left rather than restarting at sixty.
+
+      The counter is a strip of every second stacked vertically and stepped past
+      a one-line window, because this is the one page that displays a payment
+      credential and it keeps `script-src 'none'`. A JavaScript timer would read
+      more naturally and is not worth spending that property on.
+    *@
+    <div class="countdown @Model.CountdownOffsetClass">
+      <div class="countdown__ring-container">
+        <svg class="countdown__ring" width="72" height="72" viewBox="0 0 64 64"
+             role="img" aria-label="@Text["Time remaining before this code expires"]">
+          <circle class="countdown__track" cx="32" cy="32" r="27"></circle>
+          <circle class="countdown__value" cx="32" cy="32" r="27"></circle>
+        </svg>
+        <span class="countdown__number" aria-hidden="true">
+          <span class="countdown__strip">
+            @for (var second = 60; second >= 0; second--)
+            {
+              <span class="countdown__tick">@second<small>s</small></span>
+            }
+          </span>
+        </span>
+      </div>
+      <p class="countdown__text">
+        <strong>@Text["Show this now"]</strong>
+        @Text["The code stops working after 60 seconds."]
+      </p>
+    </div>
+    <p class="payment-or" aria-hidden="true">@Text["or enter"]</p>
+    <output id="payment-number" class="payment-number"
+            aria-label="@Text["12-digit payment code"]">@Model.FormattedNumericCode</output>
+    <p class="hint">
+      @Text["Show the QR code to the cashier or read the 12-digit code. Never share it with anyone outside checkout."]
+    </p>
+    <p class="payment-expiry">
+      @Text["Valid until"]
+      <time datetime="@Model.Credential.ExpiresAtUtc.ToString("O")">
+        @Model.Credential.ExpiresAtUtc.ToLocalTime().ToString("T")
+      </time>
+    </p>
+
+    <iframe class="payment-status-frame"
+            title="@Text["Checkout status"]"
+            sandbox="allow-same-origin"
+            src="@Url.Page("/PaymentStatus", new {
+              giftCardId = Model.Credential.GiftCardId,
+              paymentTokenId = Model.Credential.Id
+            })"></iframe>
+  </section>
+}

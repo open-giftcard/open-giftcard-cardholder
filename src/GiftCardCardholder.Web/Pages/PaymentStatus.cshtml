@@ -1,0 +1,73 @@
+@page "/cards/{giftCardId:guid}/pay/status"
+@model PaymentStatusModel
+@{
+  Layout = null;
+}
+<!doctype html>
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  @if (Model.ShouldRefresh)
+  {
+    <meta http-equiv="refresh" content="2" />
+  }
+  <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+  <title>@Text["Checkout status"]</title>
+</head>
+<body class="payment-status-body">
+  <main class="payment-status payment-status--@Model.State.ToLowerInvariant()"
+        role="status" aria-live="polite">
+    @switch (Model.State)
+    {
+      case "Pending":
+        <h2>@Text["Waiting for the cashier"]</h2>
+        <p>@Text["Keep this page open while the cashier scans or enters your code."]</p>
+        break;
+      case "Active":
+        <h2>@Text["Payment in progress"]</h2>
+        <p>@(Model.DisplayAmount is null
+          ? Text["The cashier is confirming your payment."]
+          : Text["The cashier is confirming {0}.", Model.DisplayAmount])</p>
+        break;
+      case "Confirmed":
+        @* The one outcome worth showing rather than only stating. *@
+        <svg class="payment-status__mark" viewBox="0 0 48 48" aria-hidden="true"
+             width="48" height="48">
+          <circle class="payment-status__mark-ring" cx="24" cy="24" r="21"></circle>
+          <path class="payment-status__mark-tick" d="M14 24.5 L21 31.5 L34 17"></path>
+        </svg>
+        <h2>@Text["Payment complete"]</h2>
+        <p>@(Model.DisplayAmount is null
+          ? Text["Your gift card payment was confirmed."]
+          : Text["Paid {0}.", Model.DisplayAmount])</p>
+        break;
+      case "Cancelled":
+        <h2>@Text["Payment not completed"]</h2>
+        <p>@Text["The cashier cancelled this payment. Generate a new code if you still want to pay."]</p>
+        break;
+      case "Expired":
+        <h2>@Text["Payment code expired"]</h2>
+        <p>@Text["This checkout was not completed. Generate a new code to try again."]</p>
+        break;
+      case "SessionExpired":
+        <h2>@Text["Your session expired"]</h2>
+        <p>@Text["Start again from a fresh page to check or make a payment."]</p>
+        break;
+      case "Unknown":
+        @*
+          The backend does not recognise this checkout. That is not the same as
+          an expired code, and saying so would tell a cardholder their valid
+          code had died. Say only what is true.
+        *@
+        <h2>@Text["Checkout status unavailable"]</h2>
+        <p>@Text["We could not read this checkout. Your card and its balance are unaffected."]</p>
+        break;
+      default:
+        <h2>@Text["Checking payment"]</h2>
+        <p>@Text["We could not check the result yet. This page will try again."]</p>
+        break;
+    }
+  </main>
+</body>
+</html>

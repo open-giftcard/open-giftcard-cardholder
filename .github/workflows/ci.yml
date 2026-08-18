@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: browser-tests/pnpm-lock.yaml
+
+      - name: Restore
+        run: dotnet restore GiftCardCardholder.slnx
+
+      - name: Format
+        run: dotnet format GiftCardCardholder.slnx --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build GiftCardCardholder.slnx --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test GiftCardCardholder.slnx --no-build --configuration Release
+
+      - name: Install browser checks
+        working-directory: browser-tests
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install firefox chromium
+
+      - name: Type-check browser checks
+        working-directory: browser-tests
+        run: pnpm run typecheck
+
+      - name: Firefox and Chromium accessibility
+        working-directory: browser-tests
+        run: pnpm run test

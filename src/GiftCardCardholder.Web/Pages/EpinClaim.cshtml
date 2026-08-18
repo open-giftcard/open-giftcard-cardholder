@@ -1,0 +1,69 @@
+@page "/epin/claim"
+@model EpinClaimModel
+@{
+    ViewData["Title"] = Text["Add your e-pin"];
+    ViewData["ShowSignOut"] = Model.IsSignedIn;
+}
+
+@if (!Model.HasActivation)
+{
+  <h1>@Text["We could not open this e-pin"]</h1>
+  <div class="alert alert-error" role="alert">@Text["Open the complete e-pin link supplied by the reseller and try again."]</div>
+}
+else
+{
+  <h1>@Text["Add your e-pin"]</h1>
+  <p class="lead">@Text["Enter the six-digit PIN supplied separately by the reseller."]</p>
+
+  @if (Model.ErrorMessage is not null)
+  {
+    <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+  }
+
+  @if (!Model.IsSignedIn)
+  {
+    <p class="support-note">
+      @Text["Already have a gift card account?"]
+      <a asp-page="/SignIn" asp-route-returnUrl="/epin/claim">@Text["Sign in first"]</a>
+    </p>
+  }
+
+  <form method="post" class="panel">
+    <div class="field">
+      <label for="pin">@Text["E-pin"]</label>
+      <input type="text" id="pin" name="Pin" inputmode="numeric" autocomplete="one-time-code"
+             pattern="[0-9]{6}" minlength="6" maxlength="6" required />
+    </div>
+
+    @if (!Model.IsSignedIn)
+    {
+      <fieldset class="field">
+        <legend>@Text["Create an account"]</legend>
+        <label><input type="radio" name="ContactType" value="Email" checked="@(Model.ContactType == "Email" ? "checked" : null)" /> @Text["Email address"]</label>
+        <label><input type="radio" name="ContactType" value="Phone" checked="@(Model.ContactType == "Phone" ? "checked" : null)" /> @Text["Phone number"]</label>
+      </fieldset>
+      <div class="field">
+        <label for="recipientContact">@Text["Email address or phone number"]</label>
+        <input type="text" id="recipientContact" name="RecipientContact" value="@Model.RecipientContact"
+               autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="password">@Text["Password"]</label>
+        <input type="password" id="password" name="Password" autocomplete="new-password"
+               minlength="@EpinClaimModel.MinimumPasswordLength" maxlength="@EpinClaimModel.MaximumPasswordLength" required />
+      </div>
+      <div class="field">
+        <label for="confirmPassword">@Text["Confirm password"]</label>
+        <input type="password" id="confirmPassword" name="ConfirmPassword" autocomplete="new-password"
+               minlength="@EpinClaimModel.MinimumPasswordLength" maxlength="@EpinClaimModel.MaximumPasswordLength" required />
+      </div>
+    }
+
+    <button type="submit" class="button">@Text[Model.IsSignedIn ? "Add to my account" : "Create account and add e-pin"]</button>
+  </form>
+
+  @if (Model.SuggestSignIn)
+  {
+    <a class="button button-secondary" asp-page="/SignIn" asp-route-returnUrl="/epin/claim">@Text["Sign in first"]</a>
+  }
+}

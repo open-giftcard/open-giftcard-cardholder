@@ -1,0 +1,12 @@
+@page "/epin"
+@model EpinModel
+@{
+    ViewData["Title"] = Text["Add your e-pin"];
+}
+
+<h1>@Text["We could not open this e-pin"]</h1>
+<div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+<p class="lead">
+  @Text["Check that you opened the complete link supplied by the reseller. E-pin links expire and can only be used once."]
+</p>
+<a class="button button-secondary" asp-page="/SignIn">@Text["Sign in instead"]</a>

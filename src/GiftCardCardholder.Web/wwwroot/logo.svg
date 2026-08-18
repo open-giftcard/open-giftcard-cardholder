@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Gift Card Platform">
+  <rect width="48" height="48" rx="10" fill="#4736ff"/>
+  <rect x="10" y="17" width="28" height="19" rx="3" fill="#ffffff"/>
+  <rect x="10" y="22" width="28" height="3.5" fill="#4736ff"/>
+  <rect x="22.2" y="17" width="3.6" height="19" fill="#4736ff"/>
+  <path d="M24 17c-3.2 0-5.6-1.4-5.6-3.6C18.4 11.6 19.9 10 22 10c2.4 0 3.9 2.4 4 7h-2z" fill="#ffffff"/>
+  <path d="M24 17c3.2 0 5.6-1.4 5.6-3.6C29.6 11.6 28.1 10 26 10c-2.4 0-3.9 2.4-4 7h2z" fill="#ffffff"/>
+</svg>

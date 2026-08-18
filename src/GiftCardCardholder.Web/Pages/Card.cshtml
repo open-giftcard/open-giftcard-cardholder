@@ -1,0 +1,208 @@
+@page "/cards/{giftCardId:guid}"
+@using GiftCardCardholder.Web.Display
+@model CardModel
+@{
+    ViewData["Title"] = Text["Gift card details"];
+}
+
+<a class="back-link" asp-page="/Cards">← @Text["My gift cards"]</a>
+
+<h1>@Text["Gift card details"]</h1>
+
+@if (Model.StatusMessage is not null)
+{
+  <div class="alert alert-success" role="status">@Model.StatusMessage</div>
+}
+
+@if (Model.ErrorMessage is not null)
+{
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+}
+
+@if (Model.GiftCard is not null)
+{
+  var card = Model.GiftCard;
+  var isActive = string.Equals(card.LifecycleState, "Active", StringComparison.Ordinal);
+
+  @*
+    The card the recipient recognises. Front carries what they came to see;
+    the back carries the checkout action leading to QR generation.
+  *@
+  @* Same two-state radio model as the wallet list, so one page does not teach
+     an interaction the other contradicts. There is only one card here, so the
+     group has nothing to deselect; it stays a group for consistency. *@
+  <input type="radio" name="wallet-state" id="wallet-plain" class="wallet-state"
+         aria-label="@Text["Turn the card back"]" />
+  <input type="radio" name="wallet-state" id="wallet-flip"
+         class="wallet-state wallet-state--turned"
+         aria-label="@Text["Turn the card over"]" />
+
+  <div class="wallet @(isActive ? "" : "wallet--inactive")">
+    <div class="wallet__inner">
+      <label class="wallet__face wallet__face--front" for="wallet-flip">
+        <span class="wallet__top">
+          <img class="wallet__mark" src="~/logo.svg" alt="Gift Card Platform" width="52" height="20" />
+          <span class="wallet__state">@Text[card.LifecycleState]</span>
+        </span>
+        <span class="wallet__balance-label">@Text["Available to use"]</span>
+        <span class="wallet__balance">@MoneyFormatter.Format(card.AvailableBalance, card.Currency)</span>
+        <span class="wallet__code">@card.PublicReference</span>
+        <span class="wallet__foot">
+          <span>@Text["Valid until"] @card.ExpiresAtUtc.ToLocalTime().ToString("MM/yy")</span>
+          <span class="wallet__hint">@Text["Tap to turn over"]</span>
+        </span>
+      </label>
+
+      <div class="wallet__face wallet__face--back">
+        @* Covers the whole face so any empty space turns the card back. The
+           controls sit above it and are unaffected. *@
+        <label class="wallet__flipzone" for="wallet-plain">
+          <span class="visually-hidden">@Text["Turn the card back"]</span>
+        </label>
+        <span class="wallet__stripe" aria-hidden="true"></span>
+        @if (isActive)
+        {
+          <span class="wallet__back-title">@Text["Ready to pay?"]</span>
+          <span class="wallet__back-note">@Text["Create the code only when the cashier is ready. It lasts 60 seconds."]</span>
+          @* Posts straight to issuance. Landing on a page whose only control is
+             the same button again is a step that asks nothing of the reader. *@
+          <form method="post" asp-page="/Payment" asp-route-giftCardId="@card.Id" class="wallet__form">
+            <button type="submit" class="wallet__action">@Text["Generate payment code"]</button>
+          </form>
+        }
+        else
+        {
+          <span class="wallet__back-title">@Text[card.LifecycleState]</span>
+          <span class="wallet__back-note">@Text["This card cannot be used for payment right now."]</span>
+        }
+        <span class="wallet__turn">@Text["Tap the card to turn back"]</span>
+      </div>
+    </div>
+  </div>
+
+  <article class="card-detail">
+
+    <dl class="detail-grid">
+      <div>
+        <dt>@Text["Posted balance"]</dt>
+        <dd>@MoneyFormatter.Format(card.Balance, card.Currency)</dd>
+      </div>
+      <div>
+        <dt>@Text["Reserved"]</dt>
+        <dd>@MoneyFormatter.Format(card.ReservedBalance, card.Currency)</dd>
+      </div>
+      <div>
+        <dt>@Text["Available balance"]</dt>
+        <dd>@MoneyFormatter.Format(card.AvailableBalance, card.Currency)</dd>
+      </div>
+      <div>
+        <dt>@Text["Originally loaded"]</dt>
+        <dd>@MoneyFormatter.Format(card.FundedAmount, card.Currency)</dd>
+      </div>
+      <div>
+        <dt>@Text["Valid from"]</dt>
+        <dd>@card.ValidFromUtc.ToLocalTime().ToString("d MMMM yyyy")</dd>
+      </div>
+      <div>
+        <dt>@Text["Valid until"]</dt>
+        <dd>@card.ExpiresAtUtc.ToLocalTime().ToString("d MMMM yyyy")</dd>
+      </div>
+      <div>
+        <dt>@Text["Transferable"]</dt>
+        <dd>@(card.IsTransferable ? Text["Yes"] : Text["No"])</dd>
+      </div>
+      <div>
+        <dt>@Text["Divisible"]</dt>
+        <dd>@(card.IsDivisible ? Text["Yes"] : Text["No"])</dd>
+      </div>
+      @if (card.ClaimedAtUtc is not null)
+      {
+        <div>
+          <dt>@Text["Activated"]</dt>
+          <dd>@card.ClaimedAtUtc.Value.ToLocalTime().ToString("d MMMM yyyy")</dd>
+        </div>
+      }
+    </dl>
+  </article>
+
+  <section class="panel" aria-labelledby="card-controls-heading">
+    <h2 id="card-controls-heading">@Text["Card controls"]</h2>
+    @if (Model.CanSuspend)
+    {
+      <p>@Text["Temporarily suspend this card if your phone or account may be at risk."]</p>
+      <form method="post" asp-page-handler="Suspend" asp-route-giftCardId="@card.Id">
+        <input type="hidden" asp-for="IdempotencyKey" />
+        <button type="submit" class="button button-danger">@Text["Suspend card"]</button>
+      </form>
+    }
+    else if (Model.CanReactivate)
+    {
+      <p>@Text["Reactivate this card when it is safe to use again."]</p>
+      <form method="post" asp-page-handler="Reactivate" asp-route-giftCardId="@card.Id">
+        <input type="hidden" asp-for="IdempotencyKey" />
+        <button type="submit" class="button">@Text["Reactivate card"]</button>
+      </form>
+    }
+    else
+    {
+      <p class="support-note status-note">
+        @Text["No self-service action is available for this status. Your balance and history remain visible."]
+      </p>
+    }
+  </section>
+
+  <section aria-labelledby="activity-heading">
+    <h2 id="activity-heading">@Text["Activity"]</h2>
+
+    @if (Model.HistoryErrorMessage is not null)
+    {
+      <div class="alert alert-error" role="alert">@Model.HistoryErrorMessage</div>
+      <a class="button button-secondary" asp-page="/Card" asp-route-giftCardId="@card.Id">
+        @Text["Return to latest activity"]
+      </a>
+    }
+    else if (Model.History.Count == 0)
+    {
+      <div class="empty-state compact-empty">
+        <p>@Text["There is no activity to show yet."]</p>
+      </div>
+    }
+    else
+    {
+      <ol class="timeline">
+        @foreach (var item in Model.History)
+        {
+          var amount = HistoryPresenter.Amount(item);
+          <li>
+            <div class="timeline-heading">
+              <strong>@Text[HistoryPresenter.Title(item)]</strong>
+              @if (amount is not null)
+              {
+                <span class="timeline-amount">@amount</span>
+              }
+            </div>
+            <div class="timeline-meta">
+              <time datetime="@item.OccurredAtUtc.ToString("O")">
+                @item.OccurredAtUtc.ToLocalTime().ToString("d MMM yyyy, HH:mm")
+              </time>
+              @if (item.State is not null)
+              {
+                <span>@Text[item.State]</span>
+              }
+            </div>
+          </li>
+        }
+      </ol>
+
+      @if (Model.NextCursor is not null)
+      {
+        <a class="button button-secondary"
+           asp-page="/Card"
+           asp-route-giftCardId="@card.Id"
+           asp-route-cursor="@Model.NextCursor">
+          @Text["Load earlier activity"]
+        </a>
+      }
+    }
+  </section>
+}

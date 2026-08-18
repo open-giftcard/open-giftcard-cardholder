@@ -1,0 +1,1574 @@
+/*
+  Smartphone-first styles for the recipient application.
+
+  Hand-written rather than framework-based: the whole point of the
+  server-rendered stack is that a recipient standing at a checkout counter
+  downloads a few kilobytes, not a bundle. No JavaScript is used anywhere.
+*/
+
+/* ---------------------------------------------------------------------------
+   Tokens.
+
+   Before this existed the stylesheet carried 22 distinct font sizes, 9 radii
+   and about 20 spacing values, none of which related to each other. That is
+   what made a carefully built interface read as unconsidered: not any single
+   wrong value, but the absence of a system behind all of them.
+
+   Scales below are deliberate and closed. Reach for a token; if none fits,
+   the question is which token is wrong, not what new number to add.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light dark;
+
+  /* -- neutrals -------------------------------------------------------------
+     Biased toward the brand rather than pure grey. A neutral with no hue at
+     all is the one nobody picked; a few degrees of cyan makes the greys agree
+     with the cards sitting on them. */
+  --bg: #eef2f3;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --border: #d3dcdf;
+  --text: #0f1719;
+  --text-muted: #55656a;
+
+  /* -- brand --------------------------------------------------------------- */
+  --accent: #4736ff;
+  --accent-text: #ffffff;
+  --brand: #a69eff;
+  --brand-deep: #1300e3;
+  --brand-soft: #f1f0fd;
+  --brand-line: #e1dff7;
+
+  /* -- the card field -------------------------------------------------------
+     Brighter than a purely legibility-driven ramp would be, and it can afford
+     to be because of where text actually sits. The light end is the top-left
+     corner, and the only things there are the logo on a white plate and the
+     lifecycle pill on a dark one. Every bare label lives from the middle down.
+
+     So --card-1 is set at 3.61:1 against white, comfortably past the 3:1
+     large-text floor, while --card-2 at 6.9:1 and --card-3 at 11.5:1 carry the
+     small caps, the reference and the footer. The brand #a69eff itself is
+     still refused as a field: it measures 2.34:1 and fails even large text.
+
+     Anything small added to the top of the card has to be plated or moved. */
+  --card-1: #7f74ff;
+  --card-2: #412fff;
+  --card-3: #1000c5;
+  --card-inactive-1: #5b666d;
+  --card-inactive-2: #3f484e;
+
+  /* -- status -------------------------------------------------------------- */
+  --danger: #b3261e;
+  --danger-action: #9f1d17;
+  --danger-action-text: #ffffff;
+  --danger-bg: #fdecea;
+  --success: #0f6b3f;
+  --success-bg: #e7f4ec;
+
+  /* -- radius ---------------------------------------------------------------
+     The pill is reserved for chips, badges and status. Everything that is a
+     button, a field or a container uses a real corner. Pills on every one of
+     those at once is what "circular edged" describes. */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-card: 20px;
+  --r-pill: 999px;
+
+  /* -- spacing, on a 4px grid ---------------------------------------------- */
+  --s-half: 2px;
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+
+  /* -- type -----------------------------------------------------------------
+     Body stays at 17px: this is read at arm's length in a shop, and the
+     existing size was a good call. It also clears the 16px floor below which
+     iOS Safari zooms a focused field. */
+  --t-caption: 0.75rem;      /* 12px */
+  --t-label: 0.8125rem;      /* 13px */
+  --t-small: 0.875rem;       /* 14px */
+  --t-body: 1.0625rem;       /* 17px */
+  --t-h3: 1.125rem;          /* 18px */
+  --t-h2: 1.375rem;          /* 22px */
+  --t-h1: 1.75rem;           /* 28px */
+  --t-2xl: 2.125rem;         /* 34px */
+  --t-display: clamp(2rem, 9vw, 2.75rem);
+  --t-code: clamp(1.5rem, 8vw, 2.25rem);
+  --t-card-code: clamp(1rem, 4.4vw, 1.2rem);
+
+  --tracking-tight: -0.02em;
+  --tracking-caps: 0.08em;
+  --tracking-code: 0.12em;
+
+  /* -- depth ----------------------------------------------------------------
+     A hairline first, then a tight shadow, then a wide one with negative
+     spread so it stays under the element rather than haloing it. The previous
+     single soft blur is the look every scaffolded project ships with. */
+  --hairline: rgb(15 23 25 / 8%);
+  --elev-1: 0 0 0 1px var(--hairline), 0 1px 2px rgb(0 0 0 / 5%);
+  --elev-2: 0 0 0 1px var(--hairline), 0 2px 4px rgb(0 0 0 / 5%),
+            0 8px 16px -6px rgb(0 74 85 / 14%);
+  --elev-3: 0 0 0 1px var(--hairline), 0 4px 8px rgb(0 0 0 / 6%),
+            0 20px 32px -12px rgb(0 74 85 / 22%);
+  --elev-card: 0 1px 2px rgb(0 0 0 / 12%), 0 18px 30px -14px rgb(0 48 56 / 55%);
+
+  --focus-ring: 3px solid var(--accent);
+}
+
+/*
+  Theming has three states, not two. The device preference is the default; a
+  stamped data-theme on the root element overrides it in either direction, so
+  the media query is scoped: choosing light explicitly still wins on a device
+  set to dark, which a bare media query would silently undo.
+
+  The dark palette is written twice on purpose and the two lists must stay
+  identical. The server stamps light or dark when the reader has chosen one,
+  but "match my device" can only be answered by the media query, and a media
+  condition cannot be expressed as a selector. Only the colour tokens are
+  repeated; radius, spacing and type are theme-independent and live once.
+*/
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1013;
+    --surface: #141b1e;
+    --surface-raised: #1c2529;
+    --border: #2b3639;
+    --text: #eef4f5;
+    --text-muted: #9aabaf;
+    --accent: #c6c2f6;
+    --accent-text: #0f0a49;
+    --brand: #b5aff3;
+    --brand-deep: #2418a7;
+    --brand-soft: #211c5e;
+    --brand-line: #362e97;
+    --danger: #ff9c94;
+    --danger-action: #ff9c94;
+    --danger-action-text: #250604;
+    --danger-bg: #3a1f1d;
+    --success: #8fd9b0;
+    --success-bg: #16301f;
+    --hairline: rgb(255 255 255 / 9%);
+    --elev-card: 0 1px 2px rgb(0 0 0 / 50%), 0 18px 30px -14px rgb(0 0 0 / 70%);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0b1013;
+  --surface: #141b1e;
+  --surface-raised: #1c2529;
+  --border: #2b3639;
+  --text: #eef4f5;
+  --text-muted: #9aabaf;
+  --accent: #c6c2f6;
+  --accent-text: #0f0a49;
+  --brand: #b5aff3;
+  --brand-deep: #2418a7;
+  --brand-soft: #211c5e;
+  --brand-line: #362e97;
+  --danger: #ff9c94;
+  --danger-action: #ff9c94;
+  --danger-action-text: #250604;
+  --danger-bg: #3a1f1d;
+  --success: #8fd9b0;
+  --success-bg: #16301f;
+  --hairline: rgb(255 255 255 / 9%);
+  --elev-card: 0 1px 2px rgb(0 0 0 / 50%), 0 18px 30px -14px rgb(0 0 0 / 70%);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: var(--t-body);
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 10;
+  background: var(--surface);
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-lg);
+  border: 2px solid var(--accent);
+}
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+.brand-muted {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.header-form {
+  margin: 0;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  font-size: var(--t-small);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+}
+
+/*
+  Where you are is worth showing; where you could go is not worth shouting.
+  Inactive navigation was a filled pill with a 1.5px brand border, which made
+  it louder than "Generate payment code" on the same screen. The pill shape
+  stays; only the weight moves, so the one filled control on a screen is the
+  action rather than the menu.
+*/
+.nav-btn:hover,
+.nav-btn:focus-visible {
+  background: var(--brand-soft);
+  color: var(--brand-deep);
+  border-color: var(--brand-line);
+}
+
+.nav-btn--active,
+.nav-btn--active:hover {
+  background: var(--brand-deep);
+  color: #ffffff;
+  border-color: var(--brand-deep);
+}
+
+.nav-btn--active:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.signout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  font-size: var(--t-label);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.signout-btn:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/*
+  Appearance and language sit together on the right as one block, so neither
+  can wrap away from the other when a label changes length.
+*/
+.settings {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-left: auto;
+}
+
+.chip-form {
+  margin: 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-1);
+  min-width: 34px;
+  min-height: 34px;
+  padding: var(--s-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: var(--t-label);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.chip:hover {
+  color: var(--text);
+  background: var(--brand-soft);
+}
+
+/*
+  "Türkçe" and "English" are different widths, and letting the button resize
+  pushed the header onto a second row in one language but not the other. The
+  width is fixed to fit either, so switching moves nothing.
+*/
+.chip--language {
+  width: 7.4rem;
+  padding: var(--s-1) var(--s-3);
+  justify-content: flex-start;
+  gap: var(--s-2);
+  color: var(--text);
+}
+
+.flag {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 14px;
+  border-radius: var(--r-xs);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 18%);
+}
+
+/* Appearance menu: collapsed to the current setting, open on demand. */
+.menu {
+  position: relative;
+}
+
+.menu > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.menu[open] > summary {
+  background: var(--brand-soft);
+  color: var(--text);
+}
+
+.menu__panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 12rem;
+  margin: 0;
+  padding: var(--s-1);
+  border-radius: var(--r-md);
+  background: var(--surface-raised);
+  box-shadow: var(--elev-3);
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-small);
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu__item:hover,
+.menu__item:focus-visible {
+  background: var(--brand-soft);
+}
+
+.menu__item--on {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.icon {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/*
+  A card reference is 23 characters and cannot wrap without becoming
+  unreadable, so the picker stacks instead of competing for one row. Sharing
+  the row is what pushed the balance out of the tile.
+*/
+.share-picker-tile .timeline-heading {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-half);
+}
+
+.share-picker-tile .card-reference {
+  white-space: nowrap;
+  font-size: var(--t-label);
+}
+
+.share-picker-tile .card-balance {
+  font-size: var(--t-h2);
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: var(--s-4) var(--s-4) var(--s-7);
+}
+
+.app-footer {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 0 var(--s-4) var(--s-6);
+  color: var(--text-muted);
+  font-size: var(--t-small);
+}
+
+h1 {
+  font-size: var(--t-h1);
+  line-height: 1.25;
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--s-2);
+}
+
+h2 {
+  font-size: var(--t-h3);
+  margin: 0 0 var(--s-2);
+}
+
+p {
+  margin: 0 0 var(--s-4);
+}
+
+.lead {
+  color: var(--text-muted);
+  margin-bottom: var(--s-5);
+}
+
+/*
+  Depth is a hairline plus a tight shadow, never a wide soft blur. The hairline
+  lives inside the elevation token, so a container must not also declare a
+  border or it draws the same line twice at slightly different values.
+*/
+/*
+  One container, several names. Four classes were each defining their own
+  padding, radius and edge, which is most of why the interface felt
+  unsystematic even where every individual value was reasonable. The names stay
+  so the markup does not have to churn; the definition does not.
+*/
+.panel,
+.card-tile,
+.share-picker-tile {
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  border-radius: var(--r-lg);
+  padding: var(--s-4);
+  margin-bottom: var(--s-4);
+}
+
+/* Raised is the modifier, not a separate container. */
+.card-tile {
+  background: var(--surface-raised);
+  box-shadow: var(--elev-2);
+}
+
+/* Gift card presentation */
+
+
+.card-balance {
+  font-size: var(--t-2xl);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  font-variant-numeric: tabular-nums;
+  margin: var(--s-1) 0 var(--s-1);
+}
+
+.card-reference {
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+  font-size: var(--t-small);
+  color: var(--text-muted);
+}
+
+.card-meta strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.card-detail-link {
+  margin-top: var(--s-4);
+}
+
+.card-detail {
+  margin-top: var(--s-4);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-4);
+  margin: var(--s-4) 0 0;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--border);
+}
+
+.detail-grid div {
+  min-width: 0;
+}
+
+.detail-grid dt {
+  color: var(--text-muted);
+  font-size: var(--t-label);
+}
+
+.detail-grid dd {
+  margin: var(--s-half) 0 0;
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-block;
+  font-size: var(--t-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  padding: var(--s-half) var(--s-2);
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.badge-active {
+  background: var(--success-bg);
+  color: var(--success);
+  border-color: transparent;
+}
+
+.badge-inactive {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: transparent;
+}
+
+/* Forms */
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--s-1);
+}
+
+.field {
+  margin-bottom: var(--s-4);
+}
+
+.hint {
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  margin: var(--s-1) 0 0;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+  width: 100%;
+  /* 16px minimum stops iOS Safari zooming in on focus. */
+  font-size: var(--t-body);
+  font-family: inherit;
+  padding: var(--s-3) var(--s-3);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  font-size: var(--t-body);
+  font-family: inherit;
+  padding: var(--s-3) var(--s-3);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+textarea {
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+select:focus-visible,
+textarea:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.button {
+  display: block;
+  width: 100%;
+  font-size: var(--t-body);
+  font-family: inherit;
+  font-weight: 600;
+  /* Comfortably above the 44px minimum touch target. */
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: var(--accent-text);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.button-danger {
+  background: var(--danger-action);
+  color: var(--danger-action-text);
+}
+
+.back-link {
+  display: inline-block;
+  min-height: 44px;
+  padding: var(--s-2) 0;
+  margin-bottom: var(--s-2);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--t-small);
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Messages */
+.alert {
+  border-radius: var(--r-lg);
+  padding: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-4);
+  border: 1px solid transparent;
+}
+
+.alert-error {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+}
+
+.alert-success {
+  background: var(--success-bg);
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: var(--s-7) var(--s-4);
+}
+
+.support-note {
+  font-size: var(--t-label);
+  color: var(--text-muted);
+  margin-top: var(--s-5);
+}
+
+.status-note {
+  margin: 0;
+}
+
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--s-4);
+  border-top: 1px solid var(--border);
+}
+
+.timeline li {
+  padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.timeline-heading,
+.timeline-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.timeline-amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.timeline-meta {
+  margin-top: var(--s-1);
+  color: var(--text-muted);
+  font-size: var(--t-label);
+}
+
+.compact-empty {
+  padding: var(--s-5) var(--s-4);
+}
+
+.compact-empty p {
+  margin: 0;
+}
+
+.credential-panel {
+  border-color: var(--success);
+}
+
+.credential-value {
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+}
+
+.credential-pin {
+  font-size: var(--t-h2) !important;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.payment-credential {
+  text-align: center;
+  border-color: var(--success);
+}
+
+.payment-code-stage {
+  position: relative;
+  width: min(100%, 18rem);
+  margin: var(--s-4) auto;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.payment-qr {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border: 0.75rem solid #fff;
+  border-radius: var(--r-sm);
+  animation: payment-qr-expire 60s steps(1, end) forwards;
+  animation-delay: var(--countdown-offset, 0s);
+}
+
+.payment-code-renew {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  animation: payment-code-renew 60s steps(1, end) forwards;
+  animation-delay: var(--countdown-offset, 0s);
+}
+
+.payment-code-renew strong {
+  color: var(--text);
+  font-size: var(--t-h3);
+}
+
+@keyframes payment-qr-expire {
+  from { filter: none; opacity: 1; }
+  to   { filter: blur(0.55rem); opacity: 0.38; }
+}
+
+@keyframes payment-code-renew {
+  from { visibility: hidden; opacity: 0; }
+  to   { visibility: visible; opacity: 1; }
+}
+
+.payment-or {
+  margin: var(--s-3) 0 var(--s-1);
+  color: var(--text-muted);
+}
+
+.payment-number {
+  display: block;
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  font-size: var(--t-code);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.payment-expiry {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.choice-group {
+  border: 0;
+  padding: 0;
+}
+
+.choice-group legend {
+  font-weight: 600;
+  margin-bottom: var(--s-1);
+}
+
+.choice-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-right: var(--s-4);
+  min-height: 44px;
+}
+
+.filter-grid .button,
+.share-action {
+  margin-top: var(--s-4);
+}
+
+@media (max-width: 25rem) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-heading,
+  .timeline-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--s-half);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The gift card itself.
+
+   A real card the recipient recognises, not a table of figures. It flips on tap
+   to reveal the checkout action, and the checkout code carries a countdown ring.
+
+   Both behaviours are pure CSS. The application ships no JavaScript and its
+   Content-Security-Policy says script-src 'none'; a flip animation is not worth
+   spending that on. The flip is a hidden checkbox, and the countdown is a
+   keyframe animation whose start is offset server-side to the code's real age.
+--------------------------------------------------------------------------- */
+
+.wallet {
+  position: relative;
+  perspective: 1400px;
+  margin: 0 0 var(--s-6);
+}
+
+/*
+  Plain, turned, and turned-with-details, as one page-wide radio group. The
+  browser enforces that only one card is ever turned, and unchecking the
+  previous one is what makes it animate home instead of snapping.
+*/
+.wallet-state {
+  /*
+    Anchored to the middle of its own card, not the top of it.
+
+    Activating a label focuses the input it points at, and a browser scrolls a
+    newly focused element into view. With these at the top of the item, turning
+    a card whose top edge had scrolled off screen yanked the page up to it. At
+    the midpoint the card is almost always already in view, so nothing moves.
+
+    Deliberately still focusable and still in the layout: making it
+    position: fixed would stop the scroll entirely, and would also stop a
+    keyboard user's browser from scrolling to the card they just tabbed onto.
+  */
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wallet__inner {
+  position: relative;
+  aspect-ratio: 1.586;           /* ISO/IEC 7810 ID-1, the shape of a real card */
+  transform-style: preserve-3d;
+  transition: transform 620ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Turned covers both states that show the back. */
+.wallet-state--turned:checked ~ .wallet .wallet__inner,
+.wallet-state--details:checked ~ .wallet .wallet__inner {
+  transform: rotateY(180deg);
+}
+
+.wallet-state:focus-visible ~ .wallet .wallet__inner {
+  outline: var(--focus-ring);
+  outline-offset: 4px;
+  border-radius: var(--r-card);
+}
+
+.wallet__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-4) var(--s-4);
+  border-radius: var(--r-card);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: var(--elev-card);
+  color: #ffffff;
+  /*
+    The sheen is 12%, not 26%. It sits at the top right, which is exactly where
+    the lifecycle pill sits, so a strong highlight there was pushing the
+    brightest part of the card under the contrast floor twice over.
+  */
+  background:
+    radial-gradient(118% 140% at 82% 6%, rgb(255 255 255 / 12%) 0%, transparent 56%),
+    linear-gradient(148deg, var(--card-1) 0%, var(--card-2) 52%, var(--card-3) 100%);
+  /* The brand cyan, kept as the lit edge rather than the whole surface. */
+  border-top: 1px solid rgb(0 186 211 / 40%);
+  cursor: pointer;
+}
+
+.wallet__face--back {
+  transform: rotateY(180deg);
+  justify-content: center;
+  align-items: center;
+  gap: var(--s-3);
+  text-align: center;
+  background:
+    radial-gradient(118% 140% at 18% 94%, rgb(255 255 255 / 10%) 0%, transparent 58%),
+    linear-gradient(148deg, var(--card-2) 0%, var(--card-3) 62%, #0d009f 100%);
+}
+
+/* The magnetic stripe. Decorative, and the one cue that says "turn me over". */
+.wallet__stripe {
+  position: absolute;
+  inset-inline: 0;
+  top: 1.6rem;
+  height: 2.4rem;
+  background: rgb(0 0 0 / 34%);
+}
+
+.wallet__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+
+/*
+  The real mark, on a white plate. The logo is red on white and would lose
+  most of its contrast printed straight onto the cyan face.
+*/
+.wallet__mark {
+  display: block;
+  width: auto;
+  height: 20px;
+  padding: var(--s-1) var(--s-2);
+  border-radius: var(--r-sm);
+  background: #ffffff;
+}
+
+/*
+  Debossed rather than washed. A white scrim lightened the field underneath and
+  took this small uppercase text to roughly 3.8:1; a dark one deepens it
+  instead, which clears AA and reads as pressed into the card rather than
+  printed on top of it.
+*/
+.wallet__state {
+  font-size: var(--t-caption);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  padding: var(--s-half) var(--s-2);
+  border-radius: var(--r-pill);
+  background: rgb(0 0 0 / 26%);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 20%);
+  white-space: nowrap;
+}
+
+.wallet__balance {
+  margin-top: auto;
+  font-size: var(--t-display);
+  font-weight: 600;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.wallet__balance-label {
+  font-size: var(--t-caption);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  opacity: 0.92;
+  margin-bottom: var(--s-half);
+}
+
+/* Grouped like the embossed digits on a bank card. */
+.wallet__code {
+  margin-top: var(--s-3);
+  font-size: var(--t-card-code);
+  letter-spacing: var(--tracking-code);
+  font-variant-numeric: tabular-nums;
+  word-break: break-all;
+}
+
+.wallet__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--s-4);
+  margin-top: var(--s-3);
+  font-size: var(--t-label);
+  opacity: 0.9;
+}
+
+.wallet__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: var(--t-caption);
+  opacity: 0.9;
+}
+
+.wallet__back-title {
+  font-size: var(--t-h3);
+  font-weight: 600;
+}
+
+.wallet__back-note {
+  font-size: var(--t-small);
+  opacity: 0.88;
+  max-width: 28ch;
+}
+
+.wallet__form {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+}
+
+/* Sits above the flip label so tapping it opens checkout rather than flipping. */
+.wallet__action {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  padding: var(--s-3) var(--s-5);
+  border: 0;
+  border-radius: var(--r-md);
+  background: #ffffff;
+  color: #1100ce;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.wallet__action:hover { background: var(--brand-soft); }
+
+.wallet__actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+/* The secondary of the two back-face choices: outlined rather than filled. */
+.wallet__action--quiet {
+  background: transparent;
+  border: 1.5px solid rgb(255 255 255 / 70%);
+  color: #ffffff;
+}
+
+.wallet__action--quiet:hover {
+  background: rgb(255 255 255 / 14%);
+}
+
+/*
+  The detail sheet. Animating to a real auto height needs the 0fr/1fr grid
+  trick, because height: auto is not an animatable value.
+*/
+.wallet-item {
+  position: relative;
+  margin-bottom: var(--s-6);
+}
+
+.wallet-item .wallet {
+  margin-bottom: 0;
+}
+
+.sheet {
+  display: grid;
+  grid-template-rows: 0fr;
+  /* Slides under the card so the two read as one object. Safe to apply always:
+     the box is zero-height when closed, so it pulls nothing visible upward. */
+  margin-top: calc(var(--s-3) * -1);
+  transition: grid-template-rows 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.wallet-state--details:checked ~ .sheet {
+  grid-template-rows: 1fr;
+}
+
+/*
+  Two boxes, deliberately.
+
+  The clipping box has no padding and no border, because a grid row at 0fr
+  gives an item zero content height but padding and border still paint. With
+  the chrome on this element a rounded white sliver sat under every card
+  permanently, and its flat top edge was visible through the flip.
+
+  The chrome is on the content instead, where the clip removes it completely at
+  zero height and still keeps it inside the box while closing, so it animates
+  down rather than disappearing a frame early.
+*/
+.sheet__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.sheet__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-5) var(--s-4) var(--s-1);
+  border: 1px solid var(--border);
+  border-top: 0;
+  /* Matches the card's own corner, because the sheet tucks under it and the
+     two are meant to read as one object rather than two stacked ones. */
+  border-radius: 0 0 var(--r-card) var(--r-card);
+  background: var(--surface);
+}
+
+.sheet__close {
+  align-self: flex-start;
+}
+
+.wallet-state--details:focus-visible ~ .sheet {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/*
+  The whole back is the way back. It is placed above the face's own text so
+  tapping the wording works too, and below the actions so the buttons still
+  do their own job.
+*/
+.wallet__flipzone {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--r-card);
+  cursor: pointer;
+}
+
+/* Now a hint rather than the control, since the whole face is the control. */
+.wallet__turn {
+  font-size: var(--t-label);
+  opacity: 0.82;
+}
+
+/* White on the old grey measured 3.62:1. This ramp measures 5.89:1. */
+.wallet--inactive .wallet__face {
+  background: linear-gradient(148deg, var(--card-inactive-1) 0%, var(--card-inactive-2) 100%);
+  box-shadow: var(--elev-card);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wallet__inner { transition: none; }
+}
+
+/* --- checkout countdown ------------------------------------------------- */
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-4);
+}
+
+.countdown__ring-container {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.countdown__ring {
+  width: 72px;
+  height: 72px;
+}
+
+/* A one-second-tall window onto the strip below. Pinned across the ring rather
+   than sized to its content so the number stays centred as it narrows from two
+   digits to one. */
+.countdown__number {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1em;
+  overflow: hidden;
+  font-size: var(--t-h3);
+  font-weight: 700;
+  color: var(--brand-deep);
+  letter-spacing: var(--tracking-tight);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Sixty-one ticks, one per second, stepped past the window above. The steps
+   land on whole seconds, so the number never shows a half-scrolled digit. */
+.countdown__strip {
+  display: block;
+  animation: countdown-tick 60s steps(60, end) forwards;
+  animation-delay: var(--countdown-offset, 0s);
+}
+
+.countdown__tick {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+@keyframes countdown-tick {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-60em); }
+}
+
+.countdown__number small {
+  font-size: 0.75em;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.countdown__track {
+  fill: none;
+  stroke: var(--brand-line);
+  stroke-width: 6;
+}
+
+.countdown__value {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 6;
+  stroke-linecap: round;
+  /* 2πr for r=27, so a full ring is one full dash. */
+  stroke-dasharray: 169.6;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  animation: countdown-drain 60s linear forwards;
+  animation-delay: var(--countdown-offset, 0s);
+}
+
+@keyframes countdown-drain {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: 169.6; }
+}
+
+/*
+   How far into its sixty seconds the code already is, so a reload resumes
+   rather than restarting at full while the real code quietly expires.
+
+   This has to be a class rather than an inline style: `style-src 'self'` blocks
+   style attributes, so the inline `animation-delay` this used to carry was
+   silently dropped by the browser and every render began at sixty. Enumerating
+   the sixty-one whole seconds keeps the stylesheet static and the policy
+   untouched, which is worth more than the tidier inline value.
+*/
+.countdown--o0  { --countdown-offset:  -0s; }
+.countdown--o1  { --countdown-offset:  -1s; }
+.countdown--o2  { --countdown-offset:  -2s; }
+.countdown--o3  { --countdown-offset:  -3s; }
+.countdown--o4  { --countdown-offset:  -4s; }
+.countdown--o5  { --countdown-offset:  -5s; }
+.countdown--o6  { --countdown-offset:  -6s; }
+.countdown--o7  { --countdown-offset:  -7s; }
+.countdown--o8  { --countdown-offset:  -8s; }
+.countdown--o9  { --countdown-offset:  -9s; }
+.countdown--o10 { --countdown-offset: -10s; }
+.countdown--o11 { --countdown-offset: -11s; }
+.countdown--o12 { --countdown-offset: -12s; }
+.countdown--o13 { --countdown-offset: -13s; }
+.countdown--o14 { --countdown-offset: -14s; }
+.countdown--o15 { --countdown-offset: -15s; }
+.countdown--o16 { --countdown-offset: -16s; }
+.countdown--o17 { --countdown-offset: -17s; }
+.countdown--o18 { --countdown-offset: -18s; }
+.countdown--o19 { --countdown-offset: -19s; }
+.countdown--o20 { --countdown-offset: -20s; }
+.countdown--o21 { --countdown-offset: -21s; }
+.countdown--o22 { --countdown-offset: -22s; }
+.countdown--o23 { --countdown-offset: -23s; }
+.countdown--o24 { --countdown-offset: -24s; }
+.countdown--o25 { --countdown-offset: -25s; }
+.countdown--o26 { --countdown-offset: -26s; }
+.countdown--o27 { --countdown-offset: -27s; }
+.countdown--o28 { --countdown-offset: -28s; }
+.countdown--o29 { --countdown-offset: -29s; }
+.countdown--o30 { --countdown-offset: -30s; }
+.countdown--o31 { --countdown-offset: -31s; }
+.countdown--o32 { --countdown-offset: -32s; }
+.countdown--o33 { --countdown-offset: -33s; }
+.countdown--o34 { --countdown-offset: -34s; }
+.countdown--o35 { --countdown-offset: -35s; }
+.countdown--o36 { --countdown-offset: -36s; }
+.countdown--o37 { --countdown-offset: -37s; }
+.countdown--o38 { --countdown-offset: -38s; }
+.countdown--o39 { --countdown-offset: -39s; }
+.countdown--o40 { --countdown-offset: -40s; }
+.countdown--o41 { --countdown-offset: -41s; }
+.countdown--o42 { --countdown-offset: -42s; }
+.countdown--o43 { --countdown-offset: -43s; }
+.countdown--o44 { --countdown-offset: -44s; }
+.countdown--o45 { --countdown-offset: -45s; }
+.countdown--o46 { --countdown-offset: -46s; }
+.countdown--o47 { --countdown-offset: -47s; }
+.countdown--o48 { --countdown-offset: -48s; }
+.countdown--o49 { --countdown-offset: -49s; }
+.countdown--o50 { --countdown-offset: -50s; }
+.countdown--o51 { --countdown-offset: -51s; }
+.countdown--o52 { --countdown-offset: -52s; }
+.countdown--o53 { --countdown-offset: -53s; }
+.countdown--o54 { --countdown-offset: -54s; }
+.countdown--o55 { --countdown-offset: -55s; }
+.countdown--o56 { --countdown-offset: -56s; }
+.countdown--o57 { --countdown-offset: -57s; }
+.countdown--o58 { --countdown-offset: -58s; }
+.countdown--o59 { --countdown-offset: -59s; }
+.countdown--o60 { --countdown-offset: -60s; }
+
+.payment-status-frame {
+  display: block;
+  width: 100%;
+  min-height: 9rem;
+  margin-top: 1.25rem;
+  border: 0;
+}
+
+.payment-status-body {
+  min-height: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.payment-status {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  text-align: center;
+}
+
+.payment-status h2,
+.payment-status p {
+  margin: 0;
+}
+
+.payment-status p {
+  margin-top: .4rem;
+}
+
+.payment-status--confirmed {
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.payment-status__mark {
+  display: block;
+  margin: 0 auto var(--s-2);
+}
+
+.payment-status__mark-ring {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  opacity: 0.35;
+}
+
+/* Drawn on rather than simply appearing, so the moment the sale lands is
+   something the cardholder sees happen. 44 is a little over the path length. */
+.payment-status__mark-tick {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 44;
+  animation: payment-status-tick 0.4s ease-out 0.1s backwards;
+}
+
+@keyframes payment-status-tick {
+  from { stroke-dashoffset: 44; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .payment-status__mark-tick { animation: none; }
+}
+
+.countdown__text {
+  font-size: var(--t-small);
+  color: var(--text-muted);
+}
+
+.countdown__text strong {
+  display: block;
+  color: var(--text);
+  font-size: var(--t-body);
+}
+
+/* The ring is information, not decoration, so it still runs when motion is
+   reduced — it simply stops being the only signal, since the expiry time is
+   printed beside it. */
+@media (prefers-reduced-motion: reduce) {
+  .payment-qr {
+    animation: payment-qr-expire 60s steps(1, end) forwards !important;
+    animation-delay: var(--countdown-offset, 0s) !important;
+  }
+
+  .payment-code-renew {
+    animation: payment-code-renew 60s steps(1, end) forwards !important;
+    animation-delay: var(--countdown-offset, 0s) !important;
+  }
+
+  .countdown__value {
+    animation: countdown-drain 60s linear forwards !important;
+    animation-delay: var(--countdown-offset, 0s) !important;
+  }
+
+  .countdown__strip {
+    animation: countdown-tick 60s steps(60, end) forwards !important;
+    animation-delay: var(--countdown-offset, 0s) !important;
+  }
+}
+
+/* The mark itself, shared byte-for-byte with the portal so both clients read
+   as one product rather than two projects that happen to share a backend. */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.brand-logo {
+  height: 20px;
+  width: auto;
+  display: block;
+}
+
+.app-header {
+  border-bottom: 1px solid var(--brand-line);
+  background: linear-gradient(115deg, var(--surface) 0%, var(--brand-soft) 100%);
+}

@@ -1,0 +1,20 @@
+@page
+@model ErrorModel
+@{
+    ViewData["Title"] = Text["Something went wrong"];
+}
+
+<h1>@Text["Something went wrong"]</h1>
+<p class="lead">
+  @Text["We could not complete that request. Please try again in a moment."]
+</p>
+
+@if (Model.ShowRequestId)
+{
+  <p class="support-note">
+    @Text["If you contact support, quote this reference:"]
+    <span class="card-reference">@Model.RequestId</span>
+  </p>
+}
+
+<a class="button button-secondary" asp-page="/SignIn">@Text["Back to sign in"]</a>

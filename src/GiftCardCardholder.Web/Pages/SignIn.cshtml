@@ -1,0 +1,47 @@
+@page "/signin"
+@model SignInModel
+@{
+    ViewData["Title"] = Text["Sign in"];
+}
+
+@if (Model.ActivatedIdentifier is not null)
+{
+  <div class="alert alert-success" role="status">
+    <strong>@Text["Your gift card is ready."]</strong>
+    @Text["Sign in with"] <span class="card-reference">@Model.ActivatedIdentifier</span>
+    @Text["to see it."]
+  </div>
+}
+
+<h1>@Text["Sign in"]</h1>
+<p class="lead">
+  @Text["Use the email address or phone number your gift card was sent to."]
+</p>
+
+@if (Model.ErrorMessage is not null)
+{
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+}
+
+<form method="post" class="panel">
+  <input type="hidden" asp-for="ReturnUrl" />
+  <div class="field">
+    <label for="identifier">@Text["Email address or phone number"]</label>
+    <input type="text" id="identifier" name="Identifier" value="@Model.Identifier"
+           autocomplete="username" inputmode="email" autocapitalize="none"
+           spellcheck="false" required />
+    <p class="hint">@Text["Phone numbers include the country code, for example +905551112233."]</p>
+  </div>
+
+  <div class="field">
+    <label for="password">@Text["Password"]</label>
+    <input type="password" id="password" name="Password"
+           autocomplete="current-password" required />
+  </div>
+
+  <button type="submit" class="button">@Text["Sign in"]</button>
+</form>
+
+<p class="support-note">
+  @Text["Have an activation link you have not used yet? Open that link to add your card to an account."]
+</p>

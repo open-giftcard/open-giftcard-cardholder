@@ -1,0 +1,11 @@
+@page "/share/claim"
+@model ShareClaimModel
+@{
+  ViewData["Title"] = Text["Claim shared value"];
+}
+
+<h1>@Text["Claim shared value"]</h1>
+@if (Model.ErrorMessage is not null)
+{
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+}

@@ -1,0 +1,10 @@
+@page "/session-expired"
+@{
+  ViewData["Title"] = Text["Your session expired"];
+}
+
+<section class="panel" aria-labelledby="session-expired-heading">
+  <h1 id="session-expired-heading">@Text["Your session expired"]</h1>
+  <p>@Text["For your security, this action was not completed. Start again from a fresh page."]</p>
+  <a class="button" asp-page="/SignIn">@Text["Start again"]</a>
+</section>

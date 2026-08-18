@@ -1,0 +1,12 @@
+@page "/activate"
+@model ActivateModel
+@{
+    ViewData["Title"] = Text["Activate your gift card"];
+}
+
+<h1>@Text["We could not open this link"]</h1>
+<div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+<p class="lead">
+  @Text["Activation links can only be used once, and they expire. If yours no longer works, ask the company that sent your gift card to send a new one."]
+</p>
+<a class="button button-secondary" asp-page="/SignIn">@Text["Sign in instead"]</a>

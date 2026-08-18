@@ -1,0 +1,29 @@
+# .NET
+**/bin/
+**/obj/
+artifacts/
+
+# Test and coverage output
+**/TestResults/
+**/coverage/
+*.trx
+
+# Local configuration and secrets — never commit these
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+*.user
+
+# Test-only browser automation output
+browser-tests/node_modules/
+browser-tests/playwright-report/
+browser-tests/test-results/
+.local/
+
+# IDE and operating system
+.idea/
+.vs/
+.vscode/
+.DS_Store
+Thumbs.db

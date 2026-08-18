@@ -1,0 +1,10 @@
+@page "/activate/share"
+@model ActivateShareModel
+@{
+  ViewData["Title"] = Text["Activate shared value"];
+}
+
+<h1>@Text["We could not open this share link"]</h1>
+<div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+<p class="lead">@Text["Share invitation links can only be used once and expire after 24 hours."]</p>
+<a class="button button-secondary" asp-page="/SignIn">@Text["Sign in instead"]</a>

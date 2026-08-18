@@ -1,0 +1,40 @@
+@page "/activate/confirm"
+@model ActivateConfirmModel
+@{
+    ViewData["Title"] = Text["Activate your gift card"];
+}
+
+@if (Model.ErrorMessage is not null)
+{
+  <h1>@Text["We could not activate this card"]</h1>
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+  @if (Model.SuggestSignIn)
+  {
+    <a class="button" asp-page="/SignIn">@Text["Sign in"]</a>
+  }
+  else
+  {
+    <a class="button button-secondary" asp-page="/SignIn">@Text["Sign in instead"]</a>
+  }
+}
+
+@if (Model.HasActivation && Model.ErrorMessage is null)
+{
+  <h1>@Text["You have received a gift card"]</h1>
+  <p class="lead">
+    @Text["Activate it to add it to your account. You will be able to see its balance and spend it at participating stores."]
+  </p>
+
+  <div class="panel">
+    <form method="post">
+      <button type="submit" class="button">@Text["Activate my gift card"]</button>
+    </form>
+    <p class="hint">
+      @Text["Activation can only be done once, from this link."]
+    </p>
+  </div>
+
+  <p class="support-note">
+    @Text["Did not expect this? Do not activate the card, and contact the company that sent it."]
+  </p>
+}

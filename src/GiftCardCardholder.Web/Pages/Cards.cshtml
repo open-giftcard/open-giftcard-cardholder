@@ -1,0 +1,152 @@
+@page "/cards"
+@using GiftCardCardholder.Web.Display
+@model CardsModel
+@{
+    ViewData["Title"] = Text["My gift cards"];
+}
+
+<h1>@Text["My gift cards"]</h1>
+
+@if (Model.StatusMessage is not null)
+{
+  <div class="alert alert-success" role="status">@Model.StatusMessage</div>
+}
+
+@*
+  Said once, right after activation. Until now the recipient chose a password
+  and was signed in without ever being shown the contact it belongs to, which
+  is survivable until they come back on another device.
+*@
+@if (Model.SignInIdentifier is not null)
+{
+  <div class="alert alert-success" role="status">
+    <strong>@Text["Your card is ready."]</strong>
+    @Text["Next time, sign in with"]
+    <span class="card-reference">@Model.SignInIdentifier</span>
+    @Text["and the password you just chose."]
+  </div>
+}
+
+@if (Model.ErrorMessage is not null)
+{
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+}
+
+@if (Model.Cards.Count == 0 && Model.ErrorMessage is null)
+{
+  <div class="empty-state">
+    <p>@Text["You do not have any gift cards yet."]</p>
+    <p>@Text["When a company sends you one, open the activation link they send you."]</p>
+  </div>
+}
+
+@foreach (var card in Model.Cards)
+{
+  var isUsable = string.Equals(card.LifecycleState, "Active", StringComparison.Ordinal);
+  var plainId = $"plain-{card.Id}";
+  var flipId = $"flip-{card.Id}";
+  var detailsId = $"details-{card.Id}";
+  var panelId = $"panel-{card.Id}";
+
+  @*
+    Three radios in one page-wide group are the whole interaction model: plain,
+    turned, and turned with the detail sheet raised.
+
+    Radios rather than checkboxes because only one card should be turned at a
+    time, and a radio group is the one thing that enforces that without
+    JavaScript. The browser unchecks the previously selected card itself, so
+    the card that was turned animates back through the transition it already
+    has rather than snapping. Checkboxes are independent and left every card a
+    reader had ever opened sitting open behind them.
+  *@
+  <article class="wallet-item">
+    <input type="radio" name="wallet-state" id="@plainId" class="wallet-state"
+           aria-label="@Text["Turn the card back"]" />
+    <input type="radio" name="wallet-state" id="@flipId" class="wallet-state wallet-state--turned"
+           aria-label="@Text["Turn the card over"]" />
+    <input type="radio" name="wallet-state" id="@detailsId" class="wallet-state wallet-state--details"
+           aria-controls="@panelId" aria-label="@Text["View card details"]" />
+
+    <div class="wallet">
+      <div class="wallet__inner">
+        <label class="wallet__face wallet__face--front" for="@flipId">
+          <span class="wallet__top">
+            <img class="wallet__mark" src="~/logo.svg" alt="Gift Card Platform" width="52" height="20" />
+            <span class="wallet__state">@Text[card.LifecycleState]</span>
+          </span>
+          <span class="wallet__balance-label">@Text["Available to use"]</span>
+          <span class="wallet__balance">@MoneyFormatter.Format(card.AvailableBalance, card.Currency)</span>
+          <span class="wallet__code">@card.PublicReference</span>
+          <span class="wallet__foot">
+            <span>@Text["Valid until"] @card.ExpiresAtUtc.ToLocalTime().ToString("MM/yy")</span>
+            <span class="wallet__hint">@Text["Tap to turn over"]</span>
+          </span>
+        </label>
+
+        <div class="wallet__face wallet__face--back">
+          @* Covers the whole face so any empty space turns the card back. The
+             controls sit above it and are unaffected. *@
+          <label class="wallet__flipzone" for="@plainId">
+            <span class="visually-hidden">@Text["Turn the card back"]</span>
+          </label>
+          <span class="wallet__stripe" aria-hidden="true"></span>
+          <div class="wallet__actions">
+            @if (isUsable)
+            {
+              <form method="post" asp-page="/Payment" asp-route-giftCardId="@card.Id" class="wallet__form">
+                <button type="submit" class="wallet__action">@Text["Generate payment code"]</button>
+              </form>
+            }
+            else
+            {
+              <span class="wallet__back-note">@Text["This card cannot be used for payment right now."]</span>
+            }
+            <label class="wallet__action wallet__action--quiet" for="@detailsId">
+              @Text["View card details"]
+            </label>
+          </div>
+          <span class="wallet__turn">@Text["Tap the card to turn back"]</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet" id="@panelId">
+      @* The clipping box carries no padding or border of its own, so at zero
+         height there is nothing left to paint. The chrome sits on the content
+         inside it. *@
+      <div class="sheet__inner">
+        <div class="sheet__content">
+        <dl class="detail-grid">
+          <div><dt>@Text["Posted balance"]</dt><dd>@MoneyFormatter.Format(card.Balance, card.Currency)</dd></div>
+          <div><dt>@Text["Reserved"]</dt><dd>@MoneyFormatter.Format(card.ReservedBalance, card.Currency)</dd></div>
+          <div><dt>@Text["Available balance"]</dt><dd>@MoneyFormatter.Format(card.AvailableBalance, card.Currency)</dd></div>
+          <div><dt>@Text["Originally loaded"]</dt><dd>@MoneyFormatter.Format(card.FundedAmount, card.Currency)</dd></div>
+          <div><dt>@Text["Valid from"]</dt><dd>@card.ValidFromUtc.ToLocalTime().ToString("d MMMM yyyy")</dd></div>
+          <div><dt>@Text["Valid until"]</dt><dd>@card.ExpiresAtUtc.ToLocalTime().ToString("d MMMM yyyy")</dd></div>
+          @if (card.ClaimedAtUtc is { } claimedAt)
+          {
+            <div><dt>@Text["Activated"]</dt><dd>@claimedAt.ToLocalTime().ToString("d MMMM yyyy")</dd></div>
+          }
+        </dl>
+
+        @*
+          Transferability, divisibility, the card controls and the activity
+          list are not part of the wallet payload, so they stay on the card's
+          own page rather than being guessed at here.
+        *@
+        <a class="button button-secondary" asp-page="/Card" asp-route-giftCardId="@card.Id">
+          @Text["Card controls and activity"]
+        </a>
+        <label class="link-button sheet__close" for="@flipId">@Text["Hide details"]</label>
+        </div>
+      </div>
+    </div>
+  </article>
+}
+
+@if (Model.Cards.Count > 0)
+{
+  <p class="support-note">
+    @Text["Balances come from the platform records and update as you spend."]
+  </p>
+}

@@ -1,0 +1,135 @@
+@page "/shares"
+@using GiftCardCardholder.Web.Display
+@model SharesModel
+@{
+  ViewData["Title"] = Text["Sharing"];
+}
+
+<h1>@Text["Sharing"]</h1>
+<p class="lead">@Text["Review value you sent or received, or select a card to share value."]</p>
+
+@if (Model.StatusMessage is not null)
+{
+  <div class="alert alert-success" role="status">@Model.StatusMessage</div>
+}
+@if (Model.ErrorMessage is not null)
+{
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+}
+
+@* ── card selection for new share ────────────────────────────────────────── *@
+<section class="panel" aria-labelledby="start-share-heading">
+  <h2 id="start-share-heading">@Text["Share gift card value"]</h2>
+  <p>@Text["Select a gift card to share part of its value with someone else."]</p>
+  @if (Model.ShareableCards.Count == 0)
+  {
+    <p class="hint">@Text["No cards with available balance to share."]</p>
+  }
+  else
+  {
+    <div class="card-picker-list">
+      @foreach (var card in Model.ShareableCards)
+      {
+        <div class="card-tile share-picker-tile">
+          <div class="timeline-heading">
+            <strong class="card-reference">@card.PublicReference</strong>
+            <span class="card-balance">@MoneyFormatter.Format(card.AvailableBalance, card.Currency)</span>
+          </div>
+          <a class="button button-primary"
+             asp-page="/ShareCreate"
+             asp-route-giftCardId="@card.Id">
+            @Text["Share this card"]
+          </a>
+        </div>
+      }
+    </div>
+  }
+</section>
+
+@* ── share history & filters ───────────────────────────────────────────── *@
+<h2>@Text["Share history"]</h2>
+
+<form method="get" class="panel filter-grid" aria-label="@Text["Filter shares"]">
+  <div class="field">
+    <label asp-for="Direction">@Text["Direction"]</label>
+    <select asp-for="Direction">
+      <option value="Sent">@Text["Sent"]</option>
+      <option value="Received">@Text["Received"]</option>
+    </select>
+  </div>
+  <div class="field">
+    <label asp-for="Kind">@Text["Type"]</label>
+    <select asp-for="Kind">
+      <option value="">@Text["All types"]</option>
+      <option value="ProtectedLink">@Text["Protected link"]</option>
+      <option value="DirectInvitation">@Text["Direct invitation"]</option>
+    </select>
+  </div>
+  <div class="field">
+    <label asp-for="State">@Text["Status"]</label>
+    <select asp-for="State">
+      <option value="">@Text["All statuses"]</option>
+      <option value="Pending">@Text["Pending"]</option>
+      <option value="Claiming">@Text["Claiming"]</option>
+      <option value="Claimed">@Text["Claimed"]</option>
+      <option value="Cancelled">@Text["Cancelled"]</option>
+      <option value="Expired">@Text["Expired"]</option>
+      <option value="Locked">@Text["Locked"]</option>
+    </select>
+  </div>
+  <button type="submit" class="button">@Text["Apply filters"]</button>
+</form>
+
+@if (Model.Shares.Count == 0 && Model.ErrorMessage is null)
+{
+  <div class="empty-state compact-empty"><p>@Text["No shares match these filters."]</p></div>
+}
+
+@foreach (var share in Model.Shares)
+{
+  <article class="card-tile share-tile">
+    <div class="timeline-heading">
+      <strong>@MoneyFormatter.Format(share.Amount, share.Currency)</strong>
+      <span class="badge @(share.State == "Claimed" ? "badge-active" : "badge-inactive")">@Text[share.State]</span>
+    </div>
+    <dl class="detail-grid">
+      <div><dt>@Text["Type"]</dt><dd>@Text[share.Kind]</dd></div>
+      <div><dt>@Text["Created"]</dt><dd>@share.CreatedAtUtc.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+      @if (share.SourceGiftCardPublicReference is not null)
+      {
+        <div><dt>@Text["Source card"]</dt><dd class="card-reference">@share.SourceGiftCardPublicReference</dd></div>
+      }
+      @if (share.ChildGiftCardPublicReference is not null)
+      {
+        <div><dt>@Text["Received card"]</dt><dd class="card-reference">@share.ChildGiftCardPublicReference</dd></div>
+      }
+      @if (share.MaskedRecipientContact is not null)
+      {
+        <div><dt>@Text["Recipient"]</dt><dd>@share.MaskedRecipientContact</dd></div>
+      }
+      <div><dt>@Text["Expires"]</dt><dd>@share.ExpiresAtUtc.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+    </dl>
+
+    @if (Model.Direction == "Sent" && share.State == "Pending")
+    {
+      <form method="post" asp-page-handler="Cancel" class="share-action">
+        <input type="hidden" name="ShareId" value="@share.Id" />
+        <input type="hidden" name="IdempotencyKey" value="@SharesModel.NewCancelKey()" />
+        <input type="hidden" name="Direction" value="@Model.Direction" />
+        <input type="hidden" name="Kind" value="@Model.Kind" />
+        <input type="hidden" name="State" value="@Model.State" />
+        <button type="submit" class="button button-danger">@Text["Cancel share"]</button>
+      </form>
+    }
+  </article>
+}
+
+@if (Model.NextCursor is not null)
+{
+  <a class="button button-secondary"
+     asp-page="/Shares"
+     asp-route-Direction="@Model.Direction"
+     asp-route-Kind="@Model.Kind"
+     asp-route-State="@Model.State"
+     asp-route-Cursor="@Model.NextCursor">@Text["Load earlier shares"]</a>
+}

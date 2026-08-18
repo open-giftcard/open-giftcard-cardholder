@@ -1,0 +1,26 @@
+@page "/activate/share/confirm"
+@model ActivateShareConfirmModel
+@{
+  ViewData["Title"] = Text["Activate shared value"];
+}
+
+@if (Model.ErrorMessage is not null)
+{
+  <h1>@Text["We could not activate this shared value"]</h1>
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+  <a class="button @(Model.SuggestSignIn ? "" : "button-secondary")" asp-page="/SignIn">
+    @(Model.SuggestSignIn ? Text["Sign in"] : Text["Sign in instead"])
+  </a>
+}
+
+@if (Model.HasActivation && Model.ErrorMessage is null)
+{
+  <h1>@Text["Someone shared gift card value with you"]</h1>
+  <p class="lead">@Text["Activate it to add a separate gift card to your account."]</p>
+  <div class="panel">
+    <form method="post">
+      <button type="submit" class="button">@Text["Activate shared value"]</button>
+    </form>
+    <p class="hint">@Text["Activation can only be done once, from this link."]</p>
+  </div>
+}

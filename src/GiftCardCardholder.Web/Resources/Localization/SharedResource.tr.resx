@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Gift Card" xml:space="preserve"><value>Hediye Kartı</value></data>
+  <data name="Skip to content" xml:space="preserve"><value>İçeriğe geç</value></data>
+  <data name="Sign out" xml:space="preserve"><value>Çıkış yap</value></data>
+  <data name="Your gift card balance is held by the platform. Keep your activation link private." xml:space="preserve"><value>Hediye kartı bakiyeniz platformda tutulur. Aktivasyon bağlantınızı gizli tutun.</value></data>
+  <data name="Activate your gift card" xml:space="preserve"><value>Hediye kartınızı etkinleştirin</value></data>
+  <data name="We could not open this link" xml:space="preserve"><value>Bu bağlantıyı açamadık</value></data>
+  <data name="Activation links can only be used once, and they expire. If yours no longer works, ask the company that sent your gift card to send a new one." xml:space="preserve"><value>Aktivasyon bağlantıları yalnızca bir kez kullanılabilir ve süreleri dolar. Bağlantınız artık çalışmıyorsa hediye kartını gönderen şirketten yeni bir bağlantı isteyin.</value></data>
+  <data name="Sign in instead" xml:space="preserve"><value>Bunun yerine giriş yap</value></data>
+  <data name="We could not activate this card" xml:space="preserve"><value>Bu kartı etkinleştiremedik</value></data>
+  <data name="Sign in" xml:space="preserve"><value>Giriş yap</value></data>
+  <data name="You have received a gift card" xml:space="preserve"><value>Bir hediye kartı aldınız</value></data>
+  <data name="Activate it to add it to your account. You will be able to see its balance and spend it at participating stores." xml:space="preserve"><value>Hesabınıza eklemek için kartı etkinleştirin. Bakiyesini görebilir ve anlaşmalı mağazalarda kullanabilirsiniz.</value></data>
+  <data name="Activate my gift card" xml:space="preserve"><value>Hediye kartımı etkinleştir</value></data>
+  <data name="Activation can only be done once, from this link." xml:space="preserve"><value>Aktivasyon bu bağlantıdan yalnızca bir kez yapılabilir.</value></data>
+  <data name="Did not expect this? Do not activate the card, and contact the company that sent it." xml:space="preserve"><value>Bu kartı beklemiyor muydunuz? Kartı etkinleştirmeyin ve kartı gönderen şirketle iletişime geçin.</value></data>
+  <data name="Create your password" xml:space="preserve"><value>Parolanızı oluşturun</value></data>
+  <data name="This is your first gift card, so choose a password to protect your account. You will use it with the email address or phone number your card was sent to." xml:space="preserve"><value>Bu ilk hediye kartınız olduğu için hesabınızı koruyacak bir parola seçin. Bu parolayı kartın gönderildiği e-posta adresi veya telefon numarasıyla kullanacaksınız.</value></data>
+  <data name="Password" xml:space="preserve"><value>Parola</value></data>
+  <data name="At least {0} characters. A short sentence you will remember works well." xml:space="preserve"><value>En az {0} karakter. Hatırlayacağınız kısa bir cümle iyi bir seçimdir.</value></data>
+  <data name="Confirm password" xml:space="preserve"><value>Parolayı doğrulayın</value></data>
+  <data name="Your gift card is ready." xml:space="preserve"><value>Hediye kartınız hazır.</value></data>
+  <data name="Sign in with" xml:space="preserve"><value>Görüntülemek için</value></data>
+  <data name="to see it." xml:space="preserve"><value>ile giriş yapın.</value></data>
+  <data name="Use the email address or phone number your gift card was sent to." xml:space="preserve"><value>Hediye kartınızın gönderildiği e-posta adresini veya telefon numarasını kullanın.</value></data>
+  <data name="Email address or phone number" xml:space="preserve"><value>E-posta adresi veya telefon numarası</value></data>
+  <data name="Phone numbers include the country code, for example +905551112233." xml:space="preserve"><value>Telefon numarasına ülke kodunu ekleyin; örneğin +905551112233.</value></data>
+  <data name="Have an activation link you have not used yet? Open that link to add your card to an account." xml:space="preserve"><value>Henüz kullanmadığınız bir aktivasyon bağlantınız mı var? Kartınızı bir hesaba eklemek için o bağlantıyı açın.</value></data>
+  <data name="My gift cards" xml:space="preserve"><value>Hediye kartlarım</value></data>
+  <data name="Your card is ready." xml:space="preserve"><value>Kartınız hazır.</value></data>
+  <data name="Next time, sign in with" xml:space="preserve"><value>Bir dahaki sefere şununla giriş yapın:</value></data>
+  <data name="and the password you just chose." xml:space="preserve"><value>ve az önce seçtiğiniz parolayla.</value></data>
+  <data name="You do not have any gift cards yet." xml:space="preserve"><value>Henüz bir hediye kartınız yok.</value></data>
+  <data name="When a company sends you one, open the activation link they send you." xml:space="preserve"><value>Bir şirket size hediye kartı gönderdiğinde iletilen aktivasyon bağlantısını açın.</value></data>
+  <data name="Loaded" xml:space="preserve"><value>Yüklenen</value></data>
+  <data name="Valid until" xml:space="preserve"><value>Son kullanım</value></data>
+  <data name="View card details" xml:space="preserve"><value>Kart ayrıntılarını görüntüle</value></data>
+  <data name="Balances come from the platform records and update as you spend." xml:space="preserve"><value>Bakiyeler platform kayıtlarından gelir ve harcama yaptıkça güncellenir.</value></data>
+  <data name="Gift card details" xml:space="preserve"><value>Hediye kartı ayrıntıları</value></data>
+  <data name="Originally loaded" xml:space="preserve"><value>Başlangıçta yüklenen</value></data>
+  <data name="Valid from" xml:space="preserve"><value>Geçerlilik başlangıcı</value></data>
+  <data name="Transferable" xml:space="preserve"><value>Devredilebilir</value></data>
+  <data name="Divisible" xml:space="preserve"><value>Bölünebilir</value></data>
+  <data name="Yes" xml:space="preserve"><value>Evet</value></data>
+  <data name="No" xml:space="preserve"><value>Hayır</value></data>
+  <data name="Activated" xml:space="preserve"><value>Etkinleştirildi</value></data>
+  <data name="Card controls" xml:space="preserve"><value>Kart kontrolleri</value></data>
+  <data name="Temporarily suspend this card if your phone or account may be at risk." xml:space="preserve"><value>Telefonunuzun veya hesabınızın risk altında olabileceğini düşünüyorsanız bu kartı geçici olarak askıya alın.</value></data>
+  <data name="Suspend card" xml:space="preserve"><value>Kartı askıya al</value></data>
+  <data name="Reactivate this card when it is safe to use again." xml:space="preserve"><value>Tekrar kullanmak güvenli olduğunda bu kartı yeniden etkinleştirin.</value></data>
+  <data name="Reactivate card" xml:space="preserve"><value>Kartı yeniden etkinleştir</value></data>
+  <data name="No self-service action is available for this status. Your balance and history remain visible." xml:space="preserve"><value>Bu durum için kullanabileceğiniz bir işlem yoktur. Bakiyeniz ve geçmişiniz görünmeye devam eder.</value></data>
+  <data name="Activity" xml:space="preserve"><value>Hareketler</value></data>
+  <data name="Return to latest activity" xml:space="preserve"><value>En son hareketlere dön</value></data>
+  <data name="There is no activity to show yet." xml:space="preserve"><value>Henüz gösterilecek bir hareket yok.</value></data>
+  <data name="Load earlier activity" xml:space="preserve"><value>Önceki hareketleri yükle</value></data>
+  <data name="Something went wrong" xml:space="preserve"><value>Bir sorun oluştu</value></data>
+  <data name="We could not complete that request. Please try again in a moment." xml:space="preserve"><value>Bu isteği tamamlayamadık. Lütfen biraz sonra tekrar deneyin.</value></data>
+  <data name="If you contact support, quote this reference:" xml:space="preserve"><value>Destekle iletişime geçerseniz şu referansı belirtin:</value></data>
+  <data name="Back to sign in" xml:space="preserve"><value>Girişe dön</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktif</value></data>
+  <data name="Suspended" xml:space="preserve"><value>Askıya alındı</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Card loaded" xml:space="preserve"><value>Karta bakiye yüklendi</value></data>
+  <data name="Card sent" xml:space="preserve"><value>Kart gönderildi</value></data>
+  <data name="Card activated" xml:space="preserve"><value>Kart etkinleştirildi</value></data>
+  <data name="Card suspended" xml:space="preserve"><value>Kart askıya alındı</value></data>
+  <data name="Card reactivated" xml:space="preserve"><value>Kart yeniden etkinleştirildi</value></data>
+  <data name="Card cancelled" xml:space="preserve"><value>Kart iptal edildi</value></data>
+  <data name="Card expired" xml:space="preserve"><value>Kartın süresi doldu</value></data>
+  <data name="Balance activity" xml:space="preserve"><value>Bakiye hareketi</value></data>
+  <data name="Delivery activity" xml:space="preserve"><value>Teslimat hareketi</value></data>
+  <data name="Card status updated" xml:space="preserve"><value>Kart durumu güncellendi</value></data>
+  <data name="Card activity" xml:space="preserve"><value>Kart hareketi</value></data>
+  <data name="This activation link is not valid, has already been used, or has expired. Please ask the company that sent your gift card for a new link." xml:space="preserve"><value>Bu aktivasyon bağlantısı geçersiz, daha önce kullanılmış veya süresi dolmuş. Lütfen hediye kartını gönderen şirketten yeni bir bağlantı isteyin.</value></data>
+  <data name="This gift card has already been activated. Sign in to see it." xml:space="preserve"><value>Bu hediye kartı daha önce etkinleştirilmiş. Görüntülemek için giriş yapın.</value></data>
+  <data name="This account is not available. Please contact support." xml:space="preserve"><value>Bu hesap kullanılamıyor. Lütfen destek ekibiyle iletişime geçin.</value></data>
+  <data name="Too many attempts. Please wait a minute and try again." xml:space="preserve"><value>Çok fazla deneme yaptınız. Lütfen bir dakika bekleyip tekrar deneyin.</value></data>
+  <data name="We could not reach the gift card service. Please try again in a moment." xml:space="preserve"><value>Hediye kartı hizmetine ulaşamadık. Lütfen biraz sonra tekrar deneyin.</value></data>
+  <data name="We could not sign you in with those details. Check them and try again." xml:space="preserve"><value>Bu bilgilerle giriş yapamadık. Bilgilerinizi kontrol edip tekrar deneyin.</value></data>
+  <data name="That took longer than expected. Please try again." xml:space="preserve"><value>İşlem beklenenden uzun sürdü. Lütfen tekrar deneyin.</value></data>
+  <data name="Your password must be between {0} and {1} characters." xml:space="preserve"><value>Parolanız {0} ile {1} karakter arasında olmalıdır.</value></data>
+  <data name="Please choose a less common password or passphrase." xml:space="preserve"><value>Lütfen daha az yaygın bir parola veya parola cümlesi seçin.</value></data>
+  <data name="Enter a password." xml:space="preserve"><value>Bir parola girin.</value></data>
+  <data name="Both passwords must match." xml:space="preserve"><value>İki parola aynı olmalıdır.</value></data>
+  <data name="Enter your email address or phone number and your password." xml:space="preserve"><value>E-posta adresinizi veya telefon numaranızı ve parolanızı girin.</value></data>
+  <data name="We could not find that gift card in your account." xml:space="preserve"><value>Bu hediye kartını hesabınızda bulamadık.</value></data>
+  <data name="We could not load this activity page. Return to the latest activity and try again." xml:space="preserve"><value>Bu hareket sayfasını yükleyemedik. En son hareketlere dönüp tekrar deneyin.</value></data>
+  <data name="That action is no longer available. The card's latest status is shown below." xml:space="preserve"><value>Bu işlem artık kullanılamıyor. Kartın en güncel durumu aşağıda gösteriliyor.</value></data>
+  <data name="Your gift card is suspended. Its balance and history are still available." xml:space="preserve"><value>Hediye kartınız askıya alındı. Bakiyesi ve geçmişi görüntülenmeye devam eder.</value></data>
+  <data name="Your gift card is active again." xml:space="preserve"><value>Hediye kartınız yeniden aktif.</value></data>
+  <data name="Account navigation" xml:space="preserve"><value>Hesap gezintisi</value></data>
+  <data name="Activate it to add a separate gift card to your account." xml:space="preserve"><value>Hesabınıza ayrı bir hediye kartı eklemek için etkinleştirin.</value></data>
+  <data name="Activate shared value" xml:space="preserve"><value>Paylaşılan değeri etkinleştir</value></data>
+  <data name="All statuses" xml:space="preserve"><value>Tüm durumlar</value></data>
+  <data name="All types" xml:space="preserve"><value>Tüm türler</value></data>
+  <data name="Amount" xml:space="preserve"><value>Tutar</value></data>
+  <data name="Apply filters" xml:space="preserve"><value>Filtreleri uygula</value></data>
+  <data name="Available balance" xml:space="preserve"><value>Kullanılabilir bakiye</value></data>
+  <data name="Available to use or share" xml:space="preserve"><value>Kullanılabilir veya paylaşılabilir</value></data>
+  <data name="Cancel share" xml:space="preserve"><value>Paylaşımı iptal et</value></data>
+  <data name="Choose a protected link or send a verified invitation directly." xml:space="preserve"><value>Korumalı bağlantı oluşturun veya doğrulanmış daveti doğrudan gönderin.</value></data>
+  <data name="Claim shared value" xml:space="preserve"><value>Paylaşılan değeri al</value></data>
+  <data name="Claimed" xml:space="preserve"><value>Alındı</value></data>
+  <data name="Claiming" xml:space="preserve"><value>Alınıyor</value></data>
+  <data name="Create a protected link" xml:space="preserve"><value>Korumalı bağlantı oluştur</value></data>
+  <data name="Create a protected link or send an invitation directly to an email address or phone number." xml:space="preserve"><value>Korumalı bağlantı oluşturun veya daveti doğrudan bir e-posta adresine ya da telefon numarasına gönderin.</value></data>
+  <data name="Create protected link" xml:space="preserve"><value>Korumalı bağlantı oluştur</value></data>
+  <data name="Created" xml:space="preserve"><value>Oluşturuldu</value></data>
+  <data name="Direct invitation" xml:space="preserve"><value>Doğrudan davet</value></data>
+  <data name="DirectInvitation" xml:space="preserve"><value>Doğrudan davet</value></data>
+  <data name="Direction" xml:space="preserve"><value>Yön</value></data>
+  <data name="Email address" xml:space="preserve"><value>E-posta adresi</value></data>
+  <data name="Expires" xml:space="preserve"><value>Son kullanma</value></data>
+  <data name="Filter shares" xml:space="preserve"><value>Paylaşımları filtrele</value></data>
+  <data name="They can set up an account from the message." xml:space="preserve"><value>Mesajdan hesap oluşturabilirler.</value></data>
+  <data name="Choose this if the recipient may not have an account yet. They receive an activation link at the email address or phone number you enter." xml:space="preserve"><value>Alıcının henüz hesabı olmayabilirse bunu seçin. Girdiğiniz e-posta adresine veya telefon numarasına bir etkinleştirme bağlantısı alırlar.</value></data>
+  <data name="They will need to sign in." xml:space="preserve"><value>Giriş yapmaları gerekir.</value></data>
+  <data name="Choose this only for someone who already has a gift card account. You send the link and PIN separately." xml:space="preserve"><value>Bunu yalnızca zaten hediye kartı hesabı olan biri için seçin. Bağlantıyı ve PIN'i ayrı gönderirsiniz.</value></data>
+  <data name="Leave this page only after you have copied both values. The PIN should not travel with the link." xml:space="preserve"><value>Her iki değeri de kopyaladıktan sonra bu sayfadan ayrılın. PIN bağlantıyla birlikte gönderilmemelidir.</value></data>
+  <data name="Load earlier shares" xml:space="preserve"><value>Önceki paylaşımları yükle</value></data>
+  <data name="Locked" xml:space="preserve"><value>Kilitli</value></data>
+  <data name="My cards" xml:space="preserve"><value>Kartlarım</value></data>
+  <data name="No shares match these filters." xml:space="preserve"><value>Bu filtrelerle eşleşen paylaşım yok.</value></data>
+  <data name="Pending" xml:space="preserve"><value>Bekliyor</value></data>
+  <data name="Phone number" xml:space="preserve"><value>Telefon numarası</value></data>
+  <data name="Posted balance" xml:space="preserve"><value>Kaydedilmiş bakiye</value></data>
+  <data name="Protected link" xml:space="preserve"><value>Korumalı bağlantı</value></data>
+  <data name="ProtectedLink" xml:space="preserve"><value>Korumalı bağlantı</value></data>
+  <data name="Protected shares can only be added to an existing gift card account." xml:space="preserve"><value>Korumalı paylaşımlar yalnızca mevcut bir hediye kartı hesabına eklenebilir.</value></data>
+  <data name="Received" xml:space="preserve"><value>Alınan</value></data>
+  <data name="Received card" xml:space="preserve"><value>Alınan kart</value></data>
+  <data name="Recipient" xml:space="preserve"><value>Alıcı</value></data>
+  <data name="Recipient email or phone" xml:space="preserve"><value>Alıcının e-postası veya telefonu</value></data>
+  <data name="Reserved" xml:space="preserve"><value>Ayrılmış</value></data>
+  <data name="Review value you sent or received. Every status comes from the platform records." xml:space="preserve"><value>Gönderdiğiniz veya aldığınız değerleri inceleyin. Her durum platform kayıtlarından gelir.</value></data>
+  <data name="Send a direct invitation" xml:space="preserve"><value>Doğrudan davet gönder</value></data>
+  <data name="Send invitation" xml:space="preserve"><value>Daveti gönder</value></data>
+  <data name="Send to" xml:space="preserve"><value>Gönderim türü</value></data>
+  <data name="Sent" xml:space="preserve"><value>Gönderilen</value></data>
+  <data name="Share gift card value" xml:space="preserve"><value>Hediye kartı değerini paylaş</value></data>
+  <data name="Share invitation links can only be used once and expire after 24 hours." xml:space="preserve"><value>Paylaşım daveti bağlantıları yalnızca bir kez kullanılabilir ve 24 saat sonra sona erer.</value></data>
+  <data name="Share link" xml:space="preserve"><value>Paylaşım bağlantısı</value></data>
+  <data name="Share value" xml:space="preserve"><value>Değer paylaş</value></data>
+  <data name="Sharing" xml:space="preserve"><value>Paylaşım</value></data>
+  <data name="Sign in first" xml:space="preserve"><value>Önce giriş yapın</value></data>
+  <data name="Sign in to continue" xml:space="preserve"><value>Devam etmek için giriş yap</value></data>
+  <data name="Six-digit PIN" xml:space="preserve"><value>Altı haneli PIN</value></data>
+  <data name="Someone shared gift card value with you" xml:space="preserve"><value>Birisi sizinle hediye kartı değeri paylaştı</value></data>
+  <data name="Source card" xml:space="preserve"><value>Kaynak kart</value></data>
+  <data name="Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="The sender should have given you a six-digit PIN separately from this link." xml:space="preserve"><value>Gönderen kişi bu bağlantıdan ayrı olarak size altı haneli bir PIN vermiş olmalıdır.</value></data>
+  <data name="These values are shown once. Send them in separate messages." xml:space="preserve"><value>Bu değerler bir kez gösterilir. Bunları ayrı mesajlarla gönderin.</value></data>
+  <data name="This is your first gift card, so choose a password to protect your account." xml:space="preserve"><value>Bu ilk hediye kartınız olduğu için hesabınızı koruyacak bir parola seçin.</value></data>
+  <data name="Type" xml:space="preserve"><value>Tür</value></data>
+  <data name="We could not activate this shared value" xml:space="preserve"><value>Bu paylaşılan değeri etkinleştiremedik</value></data>
+  <data name="We could not open this share link" xml:space="preserve"><value>Bu paylaşım bağlantısını açamadık</value></data>
+  <data name="Your protected share is ready" xml:space="preserve"><value>Korumalı paylaşımınız hazır</value></data>
+  <data name="This card cannot create that share right now. Its latest values are shown below." xml:space="preserve"><value>Bu kart şu anda bu paylaşımı oluşturamıyor. En güncel değerleri aşağıda gösteriliyor.</value></data>
+  <data name="That share was already created. For safety, its one-time link and PIN cannot be shown again." xml:space="preserve"><value>Bu paylaşım zaten oluşturuldu. Güvenlik nedeniyle tek kullanımlık bağlantısı ve PIN'i tekrar gösterilemez.</value></data>
+  <data name="The invitation was created for {0}. Its value is reserved until it is claimed or closed." xml:space="preserve"><value>Davet {0} için oluşturuldu. Değeri alınana veya kapatılana kadar ayrılmıştır.</value></data>
+  <data name="The share was cancelled. Its reserved value is available on the source card again." xml:space="preserve"><value>Paylaşım iptal edildi. Ayrılmış değeri kaynak kartta yeniden kullanılabilir.</value></data>
+  <data name="That share can no longer be cancelled. Its latest status is shown below." xml:space="preserve"><value>Bu paylaşım artık iptal edilemez. En güncel durumu aşağıda gösteriliyor.</value></data>
+  <data name="This share link or PIN is not valid, has already been used, is locked, or has expired." xml:space="preserve"><value>Bu paylaşım bağlantısı veya PIN geçersiz, daha önce kullanılmış, kilitlenmiş ya da süresi dolmuş.</value></data>
+  <data name="The shared value is now on your gift card {0}." xml:space="preserve"><value>Paylaşılan değer artık {0} hediye kartınızda.</value></data>
+  <data name="Enter an amount greater than zero." xml:space="preserve"><value>Sıfırdan büyük bir tutar girin.</value></data>
+  <data name="Choose email or phone and enter the recipient's contact." xml:space="preserve"><value>E-posta veya telefonu seçip alıcının iletişim bilgisini girin.</value></data>
+  <data name="Enter the six-digit PIN sent separately from the link." xml:space="preserve"><value>Bağlantıdan ayrı gönderilen altı haneli PIN'i girin.</value></data>
+  <data name="Pay with gift card" xml:space="preserve"><value>Hediye kartıyla öde</value></data>
+  <data name="Pay in store" xml:space="preserve"><value>Mağazada öde</value></data>
+  <data name="Create a short-lived QR and numeric code when you are at the checkout." xml:space="preserve"><value>Kasaya geldiğinizde kısa süreli bir QR ve sayısal kod oluşturun.</value></data>
+  <data name="Create a checkout code" xml:space="preserve"><value>Kasa kodu oluştur</value></data>
+  <data name="Generate the code only when the cashier is ready. It expires after 60 seconds and can be used once." xml:space="preserve"><value>Kodu yalnızca kasiyer hazır olduğunda oluşturun. Kod 60 saniye sonra sona erer ve bir kez kullanılabilir.</value></data>
+  <data name="Generate payment code" xml:space="preserve"><value>Ödeme kodu oluştur</value></data>
+  <data name="Generate new payment code" xml:space="preserve"><value>Yeni ödeme kodu oluştur</value></data>
+  <data name="Your checkout code" xml:space="preserve"><value>Kasa kodunuz</value></data>
+  <data name="QR payment code for {0}" xml:space="preserve"><value>{0} için QR ödeme kodu</value></data>
+  <data name="or enter" xml:space="preserve"><value>veya girin</value></data>
+  <data name="12-digit payment code" xml:space="preserve"><value>12 haneli ödeme kodu</value></data>
+  <data name="Show the QR code to the cashier or read the 12-digit code. Never share it with anyone outside checkout." xml:space="preserve"><value>QR kodunu kasiyere gösterin veya 12 haneli kodu okuyun. Kodu kasa dışında hiç kimseyle paylaşmayın.</value></data>
+  <data name="We could not create a payment code. Check the card's status and try again." xml:space="preserve"><value>Ödeme kodu oluşturamadık. Kartın durumunu kontrol edip yeniden deneyin.</value></data>
+  <data name="Appearance" xml:space="preserve"><value>Görünüm</value></data>
+  <data name="Light" xml:space="preserve"><value>Açık</value></data>
+  <data name="Dark" xml:space="preserve"><value>Koyu</value></data>
+  <data name="Match my device" xml:space="preserve"><value>Cihazımı izle</value></data>
+  <data name="Card controls and activity" xml:space="preserve"><value>Kart denetimleri ve hareketler</value></data>
+  <data name="Hide details" xml:space="preserve"><value>Ayrıntıları gizle</value></data>
+  <data name="Turn back" xml:space="preserve"><value>Geri çevir</value></data>
+  <data name="Tap to turn over" xml:space="preserve"><value>Çevirmek için dokunun</value></data>
+  <data name="Available to use" xml:space="preserve"><value>Kullanılabilir</value></data>
+  <data name="Turn the card over" xml:space="preserve"><value>Kartı çevir</value></data>
+  <data name="Ready to pay?" xml:space="preserve"><value>Ödemeye hazır mısınız?</value></data>
+  <data name="This card cannot be used for payment right now." xml:space="preserve"><value>Bu kart şu anda ödeme için kullanılamaz.</value></data>
+  <data name="Create the code only when the cashier is ready. It lasts 60 seconds." xml:space="preserve"><value>Kodu yalnızca kasiyer hazır olduğunda oluşturun. 60 saniye geçerlidir.</value></data>
+  <data name="Turn the card back" xml:space="preserve"><value>Kartı geri çevir</value></data>
+  <data name="Tap the card to turn back" xml:space="preserve"><value>Geri çevirmek için karta dokunun</value></data>
+  <data name="AwaitingClaim" xml:space="preserve"><value>Aktivasyon bekleniyor</value></data>
+  <data name="Time remaining before this code expires" xml:space="preserve"><value>Kodun süresi dolana kadar kalan zaman</value></data>
+  <data name="Show this now" xml:space="preserve"><value>Şimdi gösterin</value></data>
+  <data name="The code stops working after 60 seconds." xml:space="preserve"><value>Kod 60 saniye sonra geçerliliğini yitirir.</value></data>
+  <data name="Review value you sent or received, or select a card to share value." xml:space="preserve"><value>Gönderdiğiniz veya aldığınız değerleri inceleyin ya da değer paylaşmak için bir kart seçin.</value></data>
+  <data name="Select a gift card to share part of its value with someone else." xml:space="preserve"><value>Değerinin bir kısmını başkasıyla paylaşmak için bir hediye kartı seçin.</value></data>
+  <data name="No cards with available balance to share." xml:space="preserve"><value>Paylaşılabilecek bakiyeye sahip kart bulunmuyor.</value></data>
+  <data name="Share this card" xml:space="preserve"><value>Bu kartı paylaş</value></data>
+  <data name="Share history" xml:space="preserve"><value>Paylaşım geçmişi</value></data>
+  <data name="Your session expired" xml:space="preserve"><value>Oturumunuzun süresi doldu</value></data>
+  <data name="For your security, this action was not completed. Start again from a fresh page." xml:space="preserve"><value>Güvenliğiniz için bu işlem tamamlanmadı. Yeni bir sayfadan tekrar başlayın.</value></data>
+  <data name="Start again" xml:space="preserve"><value>Tekrar başla</value></data>
+  <data name="Checkout status" xml:space="preserve"><value>Ödeme durumu</value></data>
+  <data name="Waiting for the cashier" xml:space="preserve"><value>Kasiyer bekleniyor</value></data>
+  <data name="Keep this page open while the cashier scans or enters your code." xml:space="preserve"><value>Kasiyer kodunuzu okuturken veya girerken bu sayfayı açık tutun.</value></data>
+  <data name="Payment in progress" xml:space="preserve"><value>Ödeme işleniyor</value></data>
+  <data name="The cashier is confirming your payment." xml:space="preserve"><value>Kasiyer ödemenizi onaylıyor.</value></data>
+  <data name="The cashier is confirming {0}." xml:space="preserve"><value>Kasiyer {0} tutarını onaylıyor.</value></data>
+  <data name="Payment complete" xml:space="preserve"><value>Ödeme tamamlandı</value></data>
+  <data name="Your gift card payment was confirmed." xml:space="preserve"><value>Hediye kartı ödemeniz onaylandı.</value></data>
+  <data name="Paid {0}." xml:space="preserve"><value>{0} ödendi.</value></data>
+  <data name="Payment not completed" xml:space="preserve"><value>Ödeme tamamlanmadı</value></data>
+  <data name="The cashier cancelled this payment. Generate a new code if you still want to pay." xml:space="preserve"><value>Kasiyer bu ödemeyi iptal etti. Hâlâ ödeme yapmak istiyorsanız yeni bir kod oluşturun.</value></data>
+  <data name="Payment code expired" xml:space="preserve"><value>Ödeme kodunun süresi doldu</value></data>
+  <data name="This checkout was not completed. Generate a new code to try again." xml:space="preserve"><value>Bu ödeme tamamlanmadı. Tekrar denemek için yeni bir kod oluşturun.</value></data>
+  <data name="Start again from a fresh page to check or make a payment." xml:space="preserve"><value>Ödemeyi kontrol etmek veya yeniden yapmak için yeni bir sayfadan başlayın.</value></data>
+  <data name="Switch to {0}" xml:space="preserve"><value>{0} diline geç</value></data>
+  <data name="Checking payment" xml:space="preserve"><value>Ödeme kontrol ediliyor</value></data>
+  <data name="Checkout status unavailable" xml:space="preserve"><value>Ödeme durumu okunamıyor</value></data>
+  <data name="We could not read this checkout. Your card and its balance are unaffected." xml:space="preserve"><value>Bu ödemeyi okuyamadık. Kartınız ve bakiyeniz etkilenmedi.</value></data>
+  <data name="We could not check the result yet. This page will try again." xml:space="preserve"><value>Sonucu henüz kontrol edemedik. Bu sayfa tekrar deneyecek.</value></data>
+  <data name="Add your e-pin" xml:space="preserve"><value>E-pin'inizi ekleyin</value></data>
+  <data name="Already have a gift card account?" xml:space="preserve"><value>Zaten bir hediye kartı hesabınız var mı?</value></data>
+  <data name="Check that you opened the complete link supplied by the reseller. E-pin links expire and can only be used once." xml:space="preserve"><value>Satıcının verdiği bağlantının tamamını açtığınızı kontrol edin. E-pin bağlantılarının süresi dolar ve yalnızca bir kez kullanılabilir.</value></data>
+  <data name="Create an account" xml:space="preserve"><value>Hesap oluşturun</value></data>
+  <data name="E-pin" xml:space="preserve"><value>E-pin</value></data>
+  <data name="Enter the six-digit PIN supplied separately by the reseller." xml:space="preserve"><value>Satıcının ayrıca verdiği altı haneli PIN'i girin.</value></data>
+  <data name="Open the complete e-pin link supplied by the reseller and try again." xml:space="preserve"><value>Satıcının verdiği e-pin bağlantısının tamamını açıp tekrar deneyin.</value></data>
+  <data name="We could not open this e-pin" xml:space="preserve"><value>Bu e-pin'i açamadık</value></data>
+  <data name="Enter the six-digit PIN supplied by the reseller." xml:space="preserve"><value>Satıcının verdiği altı haneli PIN'i girin.</value></data>
+  <data name="Enter an email address or phone number for your new account." xml:space="preserve"><value>Yeni hesabınız için bir e-posta adresi veya telefon numarası girin.</value></data>
+  <data name="That account already exists. Sign in first, then enter the e-pin again." xml:space="preserve"><value>Bu hesap zaten var. Önce oturum açın, ardından e-pin'i tekrar girin.</value></data>
+  <data name="Your e-pin was added to your account." xml:space="preserve"><value>E-pin'iniz hesabınıza eklendi.</value></data>
+</root>

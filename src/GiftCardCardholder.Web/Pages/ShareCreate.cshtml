@@ -1,0 +1,100 @@
+@page "/cards/{giftCardId:guid}/share"
+@using GiftCardCardholder.Web.Display
+@model ShareCreateModel
+@{
+  ViewData["Title"] = Text["Share gift card value"];
+}
+
+<a class="back-link" asp-page="/Card" asp-route-giftCardId="@RouteData.Values["giftCardId"]">
+  ← @Text["Gift card details"]
+</a>
+
+<h1>@Text["Share gift card value"]</h1>
+<p class="lead">@Text["Choose a protected link or send a verified invitation directly."]</p>
+
+@if (Model.ErrorMessage is not null)
+{
+  <div class="alert alert-error" role="alert">@Model.ErrorMessage</div>
+}
+
+@if (Model.ProtectedResult is not null)
+{
+  <section class="panel credential-panel" aria-labelledby="share-ready-heading">
+    <h2 id="share-ready-heading">@Text["Your protected share is ready"]</h2>
+    <p>@Text["These values are shown once. Send them in separate messages."]</p>
+    <div class="field">
+      <label for="claim-url">@Text["Share link"]</label>
+      <textarea id="claim-url" class="credential-value" rows="4" readonly>@Model.ProtectedResult.ClaimUrl</textarea>
+    </div>
+    <div class="field">
+      <label for="share-pin">@Text["Six-digit PIN"]</label>
+      <input id="share-pin" class="credential-value credential-pin" type="text"
+             value="@Model.ProtectedResult.Pin" readonly />
+    </div>
+    <p class="hint">@Text["Leave this page only after you have copied both values. The PIN should not travel with the link."]</p>
+  </section>
+}
+
+@if (Model.DirectResult is not null)
+{
+  <div class="alert alert-success" role="status">
+    @Text[SharingMessages.DirectInvitationSent, Model.DirectResult.MaskedRecipientContact]
+  </div>
+}
+
+@if (Model.GiftCard is not null)
+{
+  var card = Model.GiftCard;
+  <section class="panel value-summary" aria-labelledby="share-value-heading">
+    <h2 id="share-value-heading">@card.PublicReference</h2>
+    <dl class="detail-grid">
+      <div><dt>@Text["Posted balance"]</dt><dd>@MoneyFormatter.Format(card.Balance, card.Currency)</dd></div>
+      <div><dt>@Text["Reserved"]</dt><dd>@MoneyFormatter.Format(card.ReservedBalance, card.Currency)</dd></div>
+      <div><dt>@Text["Available to use or share"]</dt><dd>@MoneyFormatter.Format(card.AvailableBalance, card.Currency)</dd></div>
+    </dl>
+  </section>
+
+  <section class="panel" aria-labelledby="protected-share-heading">
+    @*
+      Both options describe what happens to the recipient, not what must
+      already be true of them. Stating the precondition read as trivia and
+      people chose the link for someone with no account, then met the sign-in
+      requirement and took it for a fault.
+    *@
+    <h2 id="protected-share-heading">@Text["Create a protected link"]</h2>
+    <p><strong>@Text["They will need to sign in."]</strong>
+      @Text["Choose this only for someone who already has a gift card account. You send the link and PIN separately."]</p>
+    <form method="post" asp-page-handler="Protected" asp-route-giftCardId="@card.Id">
+      <input type="hidden" asp-for="ProtectedIdempotencyKey" />
+      <div class="field">
+        <label asp-for="ProtectedAmount">@Text["Amount"] (@card.Currency)</label>
+        <input asp-for="ProtectedAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required />
+      </div>
+      <button type="submit" class="button">@Text["Create protected link"]</button>
+    </form>
+  </section>
+
+  <section class="panel" aria-labelledby="direct-share-heading">
+    <h2 id="direct-share-heading">@Text["Send a direct invitation"]</h2>
+    <p><strong>@Text["They can set up an account from the message."]</strong>
+      @Text["Choose this if the recipient may not have an account yet. They receive an activation link at the email address or phone number you enter."]</p>
+    <form method="post" asp-page-handler="Direct" asp-route-giftCardId="@card.Id">
+      <input type="hidden" asp-for="DirectIdempotencyKey" />
+      <div class="field">
+        <label asp-for="DirectAmount">@Text["Amount"] (@card.Currency)</label>
+        <input asp-for="DirectAmount" type="number" min="0.01" step="0.01" inputmode="decimal" required />
+      </div>
+      <fieldset class="field choice-group">
+        <legend>@Text["Send to"]</legend>
+        <label><input type="radio" asp-for="RecipientContactType" value="Email" required /> @Text["Email address"]</label>
+        <label><input type="radio" asp-for="RecipientContactType" value="Phone" required /> @Text["Phone number"]</label>
+      </fieldset>
+      <div class="field">
+        <label asp-for="RecipientContact">@Text["Recipient email or phone"]</label>
+        <input asp-for="RecipientContact" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" required />
+        <p class="hint">@Text["Phone numbers include the country code, for example +905551112233."]</p>
+      </div>
+      <button type="submit" class="button">@Text["Send invitation"]</button>
+    </form>
+  </section>
+}
