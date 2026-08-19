@@ -322,6 +322,13 @@ body {
   align-items: center;
   gap: var(--s-1);
   margin-left: auto;
+  /* At 320px and 200% zoom the two chips are wider than the header's content
+     box, and without wrapping they push the document past the viewport. Wrap
+     them and let them shrink instead of forcing a horizontal scrollbar on the
+     narrowest phone this app claims to support. */
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
 .chip-form {

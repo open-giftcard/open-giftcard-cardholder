@@ -20,6 +20,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Fails when contracts/README.md declares a hash that is not the file's.
+      # The in-repo contract assertions validate the committed document, so a
+      # stale document passes them; only this compares the pin to reality.
+      - name: Backend contract pin matches its recorded hash
+        shell: bash
+        run: bash scripts/verify-contract-pin.sh
+
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
