@@ -63,4 +63,12 @@ internal sealed class BackendProblemException(
     public bool IsConflict => StatusCode == HttpStatusCode.Conflict;
 
     public bool IsTooManyRequests => StatusCode == HttpStatusCode.TooManyRequests;
+
+    /// <summary>
+    /// The backend failed rather than refusing. Worth separating, because a
+    /// server fault and a deliberate refusal need different words: telling
+    /// someone to check their card when the server threw sends them hunting for
+    /// a problem they do not have.
+    /// </summary>
+    public bool IsServerError => (int)StatusCode >= 500;
 }

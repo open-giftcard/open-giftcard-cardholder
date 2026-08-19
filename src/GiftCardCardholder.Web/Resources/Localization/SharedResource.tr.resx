@@ -185,6 +185,7 @@
   <data name="12-digit payment code" xml:space="preserve"><value>12 haneli ödeme kodu</value></data>
   <data name="Show the QR code to the cashier or read the 12-digit code. Never share it with anyone outside checkout." xml:space="preserve"><value>QR kodunu kasiyere gösterin veya 12 haneli kodu okuyun. Kodu kasa dışında hiç kimseyle paylaşmayın.</value></data>
   <data name="We could not create a payment code. Check the card's status and try again." xml:space="preserve"><value>Ödeme kodu oluşturamadık. Kartın durumunu kontrol edip yeniden deneyin.</value></data>
+  <data name="Something went wrong on our side, so no payment code was created. Your card has not been charged. Try again in a moment." xml:space="preserve"><value>Bizim tarafımızda bir sorun oluştu, bu yüzden ödeme kodu oluşturulmadı. Kartınızdan tahsilat yapılmadı. Birazdan yeniden deneyin.</value></data>
   <data name="Appearance" xml:space="preserve"><value>Görünüm</value></data>
   <data name="Light" xml:space="preserve"><value>Açık</value></data>
   <data name="Dark" xml:space="preserve"><value>Koyu</value></data>

@@ -166,6 +166,11 @@ internal sealed class PaymentModel(
             Response.StatusCode = StatusCodes.Status404NotFound;
             ErrorMessage = text[CardMessages.NotFound].Value;
         }
+        catch (BackendProblemException exception) when (exception.IsServerError)
+        {
+            Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            ErrorMessage = text[PaymentMessages.ServerError].Value;
+        }
         catch (BackendProblemException)
         {
             ErrorMessage = text[PaymentMessages.Unavailable].Value;

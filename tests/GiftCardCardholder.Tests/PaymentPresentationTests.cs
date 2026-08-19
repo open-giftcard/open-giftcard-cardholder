@@ -580,4 +580,55 @@ public sealed partial class PaymentPresentationTests : IDisposable
 
     [GeneratedRegex(@"countdown--o([0-9]+)")]
     private static partial Regex OffsetPattern();
+
+    // A backend fault and a deliberate refusal are different events and must not
+    // read the same. Telling a recipient to check their card when the server
+    // threw sends them hunting for a fault they do not have, at a till.
+    [Theory]
+    [InlineData(HttpStatusCode.InternalServerError, true)]
+    [InlineData(HttpStatusCode.BadGateway, true)]
+    [InlineData(HttpStatusCode.Conflict, false)]
+    public async Task BackendFaultAndRefusalAreReportedDifferently(
+        HttpStatusCode status,
+        bool expectServerFaultWording)
+    {
+        using var browser = factory.CreateBrowser();
+        await SignInAsync(browser);
+        using var page = await browser.GetAsync(
+            new Uri($"/cards/{GiftCardId}/pay", UriKind.Relative));
+        var html = await page.Content.ReadAsStringAsync();
+        var antiforgery = CardholderAppFactory.ExtractAntiforgeryToken(html);
+        factory.Backend.EnqueueProblem(PaymentPath, status, "payment.token.unavailable");
+
+        using var content = new FormUrlEncodedContent(
+            new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["__RequestVerificationToken"] = antiforgery,
+            });
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            new Uri($"/cards/{GiftCardId}/pay", UriKind.Relative))
+        {
+            Content = content,
+        };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "browser-forged");
+
+        using var response = await browser.SendAsync(request);
+        var body = await response.Content.ReadAsStringAsync();
+
+        if (expectServerFaultWording)
+        {
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+            Assert.Contains("went wrong on our side", body, StringComparison.Ordinal);
+            Assert.Contains("has not been charged", body, StringComparison.Ordinal);
+            Assert.DoesNotContain(
+                "Check the card&#x27;s status", body, StringComparison.Ordinal);
+        }
+        else
+        {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains("Check the card&#x27;s status", body, StringComparison.Ordinal);
+            Assert.DoesNotContain("went wrong on our side", body, StringComparison.Ordinal);
+        }
+    }
 }
