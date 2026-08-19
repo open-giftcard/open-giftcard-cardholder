@@ -164,23 +164,23 @@ public partial class Program
     /// </summary>
     private static void ConfigureDataProtection(WebApplicationBuilder builder)
     {
-        var keyPath = builder.Configuration["DataProtection:KeyPath"];
-        if (string.IsNullOrWhiteSpace(keyPath))
+        var keysPath = builder.Configuration["DataProtection:KeysPath"];
+        if (string.IsNullOrWhiteSpace(keysPath))
         {
             if (!builder.Environment.IsDevelopment())
             {
                 throw new InvalidOperationException(
-                    "DataProtection:KeyPath is required outside Development so session " +
+                    "DataProtection:KeysPath is required outside Development so session " +
                     "keys survive a restart and are shared across instances.");
             }
 
-            keyPath = Path.Combine(builder.Environment.ContentRootPath, ".local", "keys");
+            keysPath = Path.Combine(builder.Environment.ContentRootPath, ".local", "keys");
         }
 
-        Directory.CreateDirectory(keyPath);
+        Directory.CreateDirectory(keysPath);
         builder.Services
             .AddDataProtection()
             .SetApplicationName("GiftCardCardholder")
-            .PersistKeysToFileSystem(new DirectoryInfo(keyPath));
+            .PersistKeysToFileSystem(new DirectoryInfo(keysPath));
     }
 }

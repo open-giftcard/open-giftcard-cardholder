@@ -70,7 +70,7 @@ internal sealed partial class CardholderAppFactory : WebApplicationFactory<Progr
             "cardholder-tests",
             Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(path);
-        Environment.SetEnvironmentVariable("DataProtection__KeyPath", path);
+        Environment.SetEnvironmentVariable("DataProtection__KeysPath", path);
         return path;
     }
 

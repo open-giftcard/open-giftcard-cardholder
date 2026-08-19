@@ -69,7 +69,7 @@ dotnet run --project src\GiftCardCardholder.Web
 Open `http://localhost:5180`. The application creates its two tables on startup.
 Set `Backend:BaseUrl` if the backend is not on `http://localhost:5143`.
 
-Production must supply a durable, protected `DataProtection:KeyPath` and serve
+Production must supply a durable, protected `DataProtection:KeysPath` and serve
 over HTTPS so the `__Host-` prefixed session cookie is accepted; the Development
 profile deliberately permits local HTTP.
 
