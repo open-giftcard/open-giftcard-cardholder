@@ -5,6 +5,8 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
   <data name="Gift Card" xml:space="preserve"><value>Hediye Kartı</value></data>
+  <data name="Language" xml:space="preserve"><value>Dil</value></data>
+  <data name="Current language" xml:space="preserve"><value>Geçerli dil</value></data>
   <data name="Skip to content" xml:space="preserve"><value>İçeriğe geç</value></data>
   <data name="Sign out" xml:space="preserve"><value>Çıkış yap</value></data>
   <data name="Your gift card balance is held by the platform. Keep your activation link private." xml:space="preserve"><value>Hediye kartı bakiyeniz platformda tutulur. Aktivasyon bağlantınızı gizli tutun.</value></data>

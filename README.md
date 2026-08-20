@@ -1,6 +1,6 @@
 # open-giftcard-cardholder
 
-Gift Card smartphone-first cardholder application.
+Open Giftcard's smartphone-first recipient application.
 
 This is the app a person opens when their company sends them a digital gift
 card: they follow the activation link, activate the card, and see its balance.
@@ -10,21 +10,25 @@ Ledger-derived owned-card balances/history/lifecycle, and recipient sharing.
 An owner can create a protected link or direct email/phone invitation, review
 sent/received state, cancel a pending share, claim into a separate child card,
 and present a 60-second QR or grouped numeric payment code without handling a
-UUID or backend token. English is the default; the
-complete journey can be switched to Turkish.
+UUID or backend token. English is the first and deterministic default language;
+the complete journey can be switched to Turkish, and the language catalogue is
+designed to accept additional complete translations without changing the menu.
 CARD-007 adds reseller e-pin activation at `/epin`: link plus PIN can create a
 new account or, after sign-in, attach to the buyer's existing exact identity.
 
-Contributor documentation is being rewritten for this release and is not
-published yet. Until it lands, this README is the authoritative guide.
-
-The staging and production configuration contract is part of the documentation
-still to be published.
+The project is an open reference implementation, not a hosted card program or a
+claim of production certification. Start with the
+[architecture](docs/ARCHITECTURE.md), [decisions](docs/DECISIONS.md),
+[deployment contract](docs/DEPLOYMENT.md),
+[production-readiness matrix](docs/PRODUCTION_READINESS.md), and
+[public publishing workflow](docs/PUBLISHING.md).
 
 ## Architecture
 
-- ASP.NET Core 10 Razor Pages, server-rendered, with **no JavaScript** and
-  hand-written CSS — a page is a few kilobytes on mobile data.
+- ASP.NET Core 10 Razor Pages, server-rendered, with hand-written CSS — a page
+  is a few kilobytes on mobile data. A deployment may opt into a small
+  same-origin progressive-enhancement module; every journey remains complete
+  without JavaScript.
 - The application is its own Backend-for-Frontend: the browser receives HTML and
   one opaque session cookie, while backend access and refresh tokens stay
   server-side, encrypted with Data Protection.
@@ -36,6 +40,23 @@ still to be published.
 
 The backend remains the only authority for authorization, tenancy, ownership,
 and financial rules. Nothing in this repository decides any of them.
+
+### Optional JavaScript enhancements
+
+JavaScript enhancements are disabled by default. An operator can enable them
+without rebuilding:
+
+```text
+Ui__EnableJavaScriptEnhancements=true
+```
+
+Enabled mode adds smoother page and menu transitions, closes disclosure menus
+on outside click or Escape, prevents accidental duplicate form submissions,
+and keeps expanded card details in view on small screens. It does not fetch
+business data or move activation secrets, payment credentials, backend tokens,
+authorization, or financial decisions into the browser. The Content Security
+Policy changes only from `script-src 'none'` to `script-src 'self'`; inline,
+evaluated, and third-party scripts remain blocked.
 
 ## Native Windows development
 
@@ -66,7 +87,7 @@ $env:ConnectionStrings__Cardholder = "Host=localhost;Port=5432;Database=giftcard
 dotnet run --project src\GiftCardCardholder.Web
 ```
 
-Open `http://localhost:5180`. The application creates its two tables on startup.
+Open `http://localhost:5180`. The application creates its three tables on startup.
 Set `Backend:BaseUrl` if the backend is not on `http://localhost:5143`.
 
 Production must supply a durable, protected `DataProtection:KeysPath` and serve
@@ -76,6 +97,10 @@ profile deliberately permits local HTTP.
 Outside Development the application also requires an HTTPS backend URL and
 secure `__Host-` names for both cookies. `/health` reports process liveness and
 `/health/ready` verifies the cardholder-owned PostgreSQL tables.
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for every required production
+setting and [docs/PRODUCTION_READINESS.md](docs/PRODUCTION_READINESS.md) for the
+line between implemented controls and operator responsibilities.
 
 ## Verification
 

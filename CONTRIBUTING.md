@@ -15,11 +15,13 @@ phone.
 
 ## The two constraints that shape everything
 
-**No JavaScript.** Pages are server-rendered and the Content Security Policy
-sets `script-src 'none'`. A browser check asserts the page contains zero
-`<script>` elements, so this cannot be relaxed by accident. If a feature seems
-to need script, it needs a different design: the theme switch is a form post,
-and the disclosure menus are `<details>`.
+**HTML is the application.** Pages are server-rendered and must remain complete
+when JavaScript is unavailable. The default configuration sets `script-src
+'none'`; an operator may enable the repository's same-origin enhancement
+module, which changes that directive only to `script-src 'self'`. Enhancement
+code must not fetch business state, carry credentials, replace forms or links,
+or become necessary for a journey. The theme switch remains a form post and
+disclosure menus remain `<details>`.
 
 **It has to work on a small screen at high zoom.** The browser suite renders at
 320px with 200% zoom and fails on any horizontal overflow. That check earns its
@@ -67,6 +69,13 @@ English strings are also the `.resx` keys. Changing a sentence changes its key,
 so `Resources/Localization/SharedResource.tr.resx` must be updated in the same
 commit or the Turkish translation silently falls back to English.
 `LocalizationCoverageTests` guards this.
+
+English is first and is the deterministic fallback. To add a language, add one
+ordered entry to `Localization/CardholderLanguages.cs`, add its complete
+`SharedResource.<culture>.resx`, and extend the browser journey. The request
+pipeline, POST allowlist, and language menu all consume that same catalogue.
+Do not add another two-language toggle or infer language from identity, phone,
+tenant, or currency.
 
 Write for someone who did not ask for this card and does not know the product.
 Say what will happen to them, not what the system requires.

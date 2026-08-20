@@ -1,3 +1,4 @@
+using GiftCardCardholder.Web.Localization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,21 +11,19 @@ namespace GiftCardCardholder.Web.Pages;
 /// </summary>
 internal sealed class LanguageModel(IHostEnvironment environment) : PageModel
 {
-    private static readonly HashSet<string> SupportedCultures =
-        new(StringComparer.Ordinal) { "en", "tr" };
-
     public IActionResult OnGet() => NotFound();
 
     public IActionResult OnPost(string? culture, string? returnUrl)
     {
-        if (culture is null || !SupportedCultures.Contains(culture))
+        if (!CardholderLanguages.TryFind(culture, out var language))
         {
             return BadRequest();
         }
 
         Response.Cookies.Append(
             CookieRequestCultureProvider.DefaultCookieName,
-            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+            CookieRequestCultureProvider.MakeCookieValue(
+                new RequestCulture(language.CultureName)),
             new CookieOptions
             {
                 HttpOnly = true,

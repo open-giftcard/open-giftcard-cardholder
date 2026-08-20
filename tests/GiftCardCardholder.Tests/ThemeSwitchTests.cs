@@ -26,7 +26,7 @@ public sealed class ThemeSwitchTests : IDisposable
     }
 
     [Fact]
-    public async Task AppearanceIsACollapsedMenuAndTheLanguageButtonCarriesAFlag()
+    public async Task AppearanceAndLanguageAreProgressivelyEnhancedMenus()
     {
         using var browser = factory.CreateBrowser();
 
@@ -39,8 +39,12 @@ public sealed class ThemeSwitchTests : IDisposable
         Assert.Contains("name=\"theme\" value=\"dark\"", html, StringComparison.Ordinal);
         Assert.Contains("name=\"theme\" value=\"system\"", html, StringComparison.Ordinal);
 
-        // The flag partial resolved rather than rendering nothing.
-        Assert.Contains("class=\"flag\"", html, StringComparison.Ordinal);
+        // The language-neutral icon and catalogue choices rendered without
+        // assuming that every future language maps to a country flag.
+        Assert.Contains("<details class=\"menu language-menu\">", html, StringComparison.Ordinal);
+        Assert.Contains("class=\"language-icon\"", html, StringComparison.Ordinal);
+        Assert.Contains("name=\"culture\" value=\"en\"", html, StringComparison.Ordinal);
+        Assert.Contains("name=\"culture\" value=\"tr\"", html, StringComparison.Ordinal);
     }
 
     [Theory]

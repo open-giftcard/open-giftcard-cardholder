@@ -1,16 +1,18 @@
 @using System.Globalization
+@using GiftCardCardholder.Web.Configuration
+@using Microsoft.Extensions.Options
+@inject IOptions<CardholderUiOptions> UiOptions
 @{
   var culture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+  var currentLanguage = CardholderLanguages.FindOrDefault(culture);
+  culture = currentLanguage.CultureName;
   var returnUrl = Context.Request.PathBase + Context.Request.Path + Context.Request.QueryString;
-  var currentLabel = culture == "tr" ? "Türkçe" : "English";
-  var alternateCulture = culture == "tr" ? "en" : "tr";
-  var alternateLabel = culture == "tr" ? "English" : "Türkçe";
   var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+  var javascriptEnhancementsEnabled = UiOptions.Value.EnableJavaScriptEnhancements;
 
-  @* No script runs here, so the theme is stamped server-side from the cookie.
-     "system" is stamped rather than omitted so the attribute always says which
-     of the three states is in force; the stylesheet has no rule for it, which
-     is how the device preference stays in charge. *@
+  @* The theme is stamped server-side so it works before any optional script and
+     remains complete in HTML-only mode. "system" is stamped rather than omitted
+     so the attribute always says which of the three states is in force. *@
   var theme = Context.Request.Cookies["giftcard_theme"];
   if (theme is not "light" and not "dark")
   {
@@ -18,12 +20,13 @@
   }
 }
 <!DOCTYPE html>
-<html lang="@culture" data-theme="@theme">
+<html lang="@culture" data-theme="@theme"
+      data-enhancements="@(javascriptEnhancementsEnabled ? "enabled" : "disabled")">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>@ViewData["Title"] — @Text["Gift Card"]</title>
+  <title>@ViewData["Title"] — Open Giftcard</title>
   <link rel="stylesheet" href="~/css/app.css" />
   <link rel="icon" href="~/logo.svg" type="image/svg+xml" />
 </head>
@@ -32,14 +35,13 @@
   <header class="app-header">
     @* The mark is the way home, which is what people expect of a logo. *@
     <a class="brand" asp-page="/Cards" aria-label="@Text["My cards"]">
-      <img class="brand-logo" src="~/logo.svg" alt="Gift Card Platform" width="52" height="20" />
-      <span class="brand-muted">@Text["Gift Card"]</span>
+      <img class="brand-logo" src="~/logo.svg" alt="Open Giftcard" width="52" height="20" />
+      <span class="brand-muted">Open Giftcard</span>
     </a>
     @*
       Collapsed to the current setting, opening onto the other two. <details>
-      is used rather than a checkbox because it is the one disclosure the
-      platform gives us for free: keyboard, Escape, and screen-reader state all
-      work without the JavaScript this application does not ship.
+      remains the control in both modes because it supplies keyboard and
+      screen-reader state without depending on the optional enhancement module.
     *@
     <div class="settings">
       <details class="menu">
@@ -78,28 +80,34 @@
         </form>
       </details>
 
-      @*
-        The chip reads as the language you are in, matching the appearance chip
-        beside it, which also shows the setting in force rather than the one you
-        would move to. Naming the destination instead was read as a claim about
-        the current state: a Turkish page labelled "English" looks like a page
-        that thinks it is English.
-
-        Which means the visible word no longer says what the button does, so the
-        accessible name has to. The label changes with the language but the
-        control must not move, so the button is a fixed width that fits either
-        word.
-      *@
-      <form method="post" asp-page="/Language" class="chip-form">
-        <input type="hidden" name="culture" value="@alternateCulture" />
-        <input type="hidden" name="returnUrl" value="@returnUrl" />
-        <button type="submit" class="chip chip--language language-switch"
-                title="@Text["Switch to {0}", alternateLabel]">
-          <partial name="_Flag" model="@culture" />
-          <span lang="@culture" aria-hidden="true">@currentLabel</span>
-          <span class="visually-hidden">@Text["Switch to {0}", alternateLabel]</span>
-        </button>
-      </form>
+      @* English remains the first/default catalogue entry, but this is a real
+         menu rather than a two-language toggle. Adding a catalogue entry and a
+         resource file automatically adds another choice. *@
+      <details class="menu language-menu">
+        <summary class="chip chip--language" title="@Text["Language"]">
+          <partial name="_LanguageIcon" />
+          <span lang="@currentLanguage.CultureName">@currentLanguage.NativeName</span>
+          <span class="visually-hidden">@Text["Language"]</span>
+        </summary>
+        <form method="post" asp-page="/Language" class="menu__panel"
+              aria-label="@Text["Language"]">
+          <input type="hidden" name="returnUrl" value="@returnUrl" />
+          @foreach (var language in CardholderLanguages.All)
+          {
+            var isCurrentLanguage = language.CultureName == currentLanguage.CultureName;
+            <button type="submit" name="culture" value="@language.CultureName"
+                    class="menu__item @(isCurrentLanguage ? "menu__item--on" : "")"
+                    aria-pressed="@(isCurrentLanguage ? "true" : "false")">
+              <partial name="_LanguageIcon" />
+              <span lang="@language.CultureName">@language.NativeName</span>
+              @if (isCurrentLanguage)
+              {
+                <span class="visually-hidden">— @Text["Current language"]</span>
+              }
+            </button>
+          }
+        </form>
+      </details>
     </div>
     @if (ViewData["ShowSignOut"] is true)
     {
@@ -120,5 +128,9 @@
   <footer class="app-footer">
     <p>@Text["Your gift card balance is held by the platform. Keep your activation link private."]</p>
   </footer>
+  @if (javascriptEnhancementsEnabled)
+  {
+    <script type="module" src="~/js/enhancements.js" asp-append-version="true"></script>
+  }
 </body>
 </html>

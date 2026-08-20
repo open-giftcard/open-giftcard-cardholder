@@ -1,5 +1,6 @@
 using GiftCardCardholder.Web.Backend;
 using GiftCardCardholder.Web.Configuration;
+using GiftCardCardholder.Web.Localization;
 using GiftCardCardholder.Web.Security;
 using GiftCardCardholder.Web.Sessions;
 using Microsoft.AspNetCore.DataProtection;
@@ -14,13 +15,12 @@ namespace GiftCardCardholder.Web;
 /// Composition root for the recipient application.
 ///
 /// The application is server-rendered on purpose: the browser receives HTML and
-/// an opaque session cookie and nothing else. There is no client-side token
-/// handling to get wrong, and every page works with JavaScript unavailable.
+/// an opaque session cookie and nothing else. Optional same-origin JavaScript
+/// progressively enhances that HTML but never handles a backend token, and every
+/// page works with JavaScript disabled or unavailable.
 /// </summary>
 public partial class Program
 {
-    private static readonly string[] SupportedCultures = ["en", "tr"];
-
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +61,10 @@ public partial class Program
                 options => DeploymentSafety.AreSessionCookiesAllowed(options, isDevelopment),
                 "Outside Development both cardholder cookies must be secure __Host- cookies.")
             .ValidateOnStart();
+
+        builder.Services
+            .AddOptions<CardholderUiOptions>()
+            .Bind(builder.Configuration.GetSection(CardholderUiOptions.SectionName));
 
         ConfigureDataProtection(builder);
 
@@ -108,9 +112,9 @@ public partial class Program
             .AddViewLocalization();
         builder.Services.Configure<RequestLocalizationOptions>(options =>
         {
-            options.SetDefaultCulture("en");
-            options.AddSupportedCultures(SupportedCultures);
-            options.AddSupportedUICultures(SupportedCultures);
+            options.SetDefaultCulture(CardholderLanguages.DefaultCultureName);
+            options.AddSupportedCultures(CardholderLanguages.CultureNames);
+            options.AddSupportedUICultures(CardholderLanguages.CultureNames);
 
             // Locale is an explicit user choice. Ignore Accept-Language and
             // query strings so an unsupported or shared-device browser locale

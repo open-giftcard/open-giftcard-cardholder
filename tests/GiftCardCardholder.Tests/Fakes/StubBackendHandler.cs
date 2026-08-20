@@ -4,7 +4,7 @@ using System.Text;
 namespace GiftCardCardholder.Tests.Fakes;
 
 /// <summary>
-/// Stands in for the Gift Card Platform API. Responses are queued per path so a
+/// Stands in for the Open Giftcard API. Responses are queued per path so a
 /// test can script the exact backend behaviour it wants — including the
 /// password-required refusal that drives the activation branch.
 /// </summary>

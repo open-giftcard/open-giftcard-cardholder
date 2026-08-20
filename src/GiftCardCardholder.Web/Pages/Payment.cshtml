@@ -57,9 +57,9 @@ else
       is actually left rather than restarting at sixty.
 
       The counter is a strip of every second stacked vertically and stepped past
-      a one-line window, because this is the one page that displays a payment
-      credential and it keeps `script-src 'none'`. A JavaScript timer would read
-      more naturally and is not worth spending that property on.
+      a one-line window. It remains CSS-driven even when optional JavaScript
+      enhancements are enabled, so the payment credential never becomes script
+      state and HTML-only deployments retain the complete expiry experience.
     *@
     <div class="countdown @Model.CountdownOffsetClass">
       <div class="countdown__ring-container">

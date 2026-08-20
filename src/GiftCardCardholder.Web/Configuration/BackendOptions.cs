@@ -1,7 +1,7 @@
 namespace GiftCardCardholder.Web.Configuration;
 
 /// <summary>
-/// Connection settings for the authoritative Gift Card Platform API.
+/// Connection settings for the authoritative Open Giftcard API.
 /// </summary>
 public sealed class BackendOptions
 {

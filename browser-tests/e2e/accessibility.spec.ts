@@ -20,7 +20,7 @@ async function expectNoPageOverflow(page: Page) {
   );
 }
 
-test("English and Turkish sign-in are accessible and script-free", async ({
+test("default HTML-only sign-in is accessible in English and Turkish", async ({
   page,
 }) => {
   const response = await page.goto("/signin");
@@ -34,6 +34,7 @@ test("English and Turkish sign-in are accessible and script-free", async ({
   );
   await expectNoAccessibilityViolations(page);
 
+  await page.locator("details.language-menu > summary").click();
   await page.getByRole("button", { name: "Türkçe" }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "tr");
   await expect(page.getByRole("heading", { name: "Giriş yap" })).toBeVisible();
@@ -41,7 +42,9 @@ test("English and Turkish sign-in are accessible and script-free", async ({
     page.getByLabel("E-posta adresi veya telefon numarası"),
   ).toBeVisible();
   await expect(page.getByLabel("Parola")).toBeVisible();
-  await expect(page.getByRole("button", { name: "English" })).toBeVisible();
+  await expect(page.locator("details.language-menu > summary")).toContainText(
+    "Türkçe",
+  );
   await expectNoAccessibilityViolations(page);
 });
 
@@ -69,7 +72,9 @@ test("phone width and 200 percent zoom do not create page overflow", async ({
   });
   await expectNoPageOverflow(page);
   await expect(page.getByRole("button", { name: "Sign in" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Türkçe" })).toBeVisible();
+  await expect(page.locator("details.language-menu > summary")).toContainText(
+    "English",
+  );
 });
 
 test("invalid sharing links fail safely and accessibly", async ({ page }) => {

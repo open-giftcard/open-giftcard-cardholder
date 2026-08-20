@@ -211,7 +211,7 @@ public sealed partial class PaymentPresentationTests : IDisposable
         Assert.Contains(">0<small>s</small>", body, StringComparison.Ordinal);
         Assert.DoesNotContain("&#9203;", body, StringComparison.Ordinal);
 
-        // It is driven by CSS, so the page keeps script-src 'none'.
+        // The default HTML-only deployment drives it entirely with CSS.
         Assert.DoesNotContain("<script", body, StringComparison.OrdinalIgnoreCase);
 
         // The offset is a class on the shared parent, so the ring and the

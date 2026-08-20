@@ -1,23 +1,21 @@
 # Backend OpenAPI Contract
 
-`backend.openapi.json` was captured from the authoritative sibling backend:
+`backend.openapi.json` was captured from the authoritative public backend:
 
-- Repository: the platform backend
-- Branch: `chore/debrand-backend`
-- Commit: `682c075203cd1bf9935865a969fa183fa5aab844`
+- Repository: https://github.com/open-giftcard/open-giftcard
+- Branch: `main`
+- Commit: `e7bff3e0d39e1c24b89a6d39612ad5939d87f6e5`
 - Endpoint: `/swagger/v1/swagger.json`
 - SHA-256:
   `59B7B452E734A4411836342FDF4B0A24F20AD446D235C5F6BF4FA6E5DC2F6FE6`
 
-This capture re-synchronizes the portal and cardholder onto **one** backend
-document. The two had drifted apart: the portal was pinned at `3a03f70b` and the
-cardholder at `cfee9b1e`, and the cardholder's recorded SHA-256 did not match the
-file beside it. Both now carry the same bytes and the same recorded hash again.
+That public commit was rebuilt and its served OpenAPI document was verified to
+have exactly the SHA-256 recorded above. Later backend changes do not silently
+move this pin: updating the snapshot requires an explicit review and a new
+public commit reference.
 
-It also adds the `partners` surface, which neither previous pin contained even
-though the backend had been serving it and the cardholder had been calling the
-e-pin claim route. The document is de-branded: its title is now
-"Digital Corporate Gift Card Platform" and no operation summary names a retailer.
+The document includes the `partners` surface used by the e-pin claim route. Its
+API title is generic and no operation summary names a retailer.
 
 Update the snapshot only after reviewing backend contract changes at an
 explicitly accepted backend commit. Never capture from a moving backend branch

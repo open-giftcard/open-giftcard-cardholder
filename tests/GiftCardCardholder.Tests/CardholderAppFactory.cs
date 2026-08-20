@@ -17,7 +17,8 @@ namespace GiftCardCardholder.Tests;
 /// page, cookie, antiforgery, and security-header behaviour under test is the
 /// production one.
 /// </summary>
-internal sealed partial class CardholderAppFactory : WebApplicationFactory<Program>
+internal sealed partial class CardholderAppFactory(
+    bool enableJavaScriptEnhancements = false) : WebApplicationFactory<Program>
 {
     /// <summary>
     /// Data Protection needs its key path at registration time, before the host
@@ -47,6 +48,8 @@ internal sealed partial class CardholderAppFactory : WebApplicationFactory<Progr
                 ["ConnectionStrings:Cardholder"] =
                     "Host=localhost;Database=cardholder_unused;Username=unused",
                 ["Backend:BaseUrl"] = "http://backend.invalid",
+                ["Ui:EnableJavaScriptEnhancements"] =
+                    enableJavaScriptEnhancements.ToString(),
                 ["CardholderSession:RequireSecureCookies"] = "false",
                 ["CardholderSession:SessionCookieName"] = "cardholder-session",
                 ["CardholderSession:ActivationCookieName"] = "cardholder-activation",

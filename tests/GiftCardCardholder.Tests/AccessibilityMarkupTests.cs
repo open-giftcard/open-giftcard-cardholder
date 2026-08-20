@@ -111,6 +111,20 @@ public sealed partial class AccessibilityMarkupTests : IDisposable
     }
 
     [Fact]
+    public async Task PublicProductIdentityIsRenderedConsistently()
+    {
+        using var browser = factory.CreateBrowser();
+
+        using var response = await browser.GetAsync(new Uri("/signin", UriKind.Relative));
+        var html = await response.Content.ReadAsStringAsync();
+
+        Assert.Contains("<title>Sign in — Open Giftcard</title>", html, StringComparison.Ordinal);
+        Assert.Contains("alt=\"Open Giftcard\"", html, StringComparison.Ordinal);
+        Assert.Contains(">Open Giftcard</span>", html, StringComparison.Ordinal);
+        Assert.DoesNotContain("Gift Card Platform", html, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task TheCardListExposesBalancesAsTextRatherThanColourAlone()
     {
         factory.Backend.Enqueue("auth/login", HttpStatusCode.OK, TokenPairJson);

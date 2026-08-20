@@ -23,10 +23,12 @@ This repository is responsible for the browser boundary, and it is the surface
 an untrusted member of the public reaches first, arriving from an emailed
 activation link.
 
-**No JavaScript at all.** Pages are server-rendered and the Content Security
-Policy sets `script-src 'none'`. A test asserts the rendered page contains zero
-`<script>` elements, so the policy cannot be quietly relaxed. This removes
-script injection as a class rather than filtering it.
+**JavaScript is optional and same-origin only.** Pages are server-rendered and
+the default Content Security Policy sets `script-src 'none'`. An operator may
+enable the repository's progressive-enhancement module, which changes the
+directive only to `script-src 'self'`; inline, evaluated, and third-party script
+remain blocked. Tests cover both modes. The module handles presentation only
+and receives no backend token, activation secret, or payment credential.
 
 **The activation secret is kept out of the referrer.** A claim link carries a
 secret in its URL, so every response sets `Referrer-Policy: no-referrer`. The
@@ -57,6 +59,10 @@ its real expiry and requires an explicit action to reissue.
 - **The user interface has not been reviewed on a screen by a second person.**
   Accessibility and contrast are asserted by automated checks and computed
   ratios rather than by inspection.
+
+The full separation between implemented application controls, deployment
+responsibilities, and unverified promotion work is tracked in
+[docs/PRODUCTION_READINESS.md](docs/PRODUCTION_READINESS.md).
 
 ## Scope
 

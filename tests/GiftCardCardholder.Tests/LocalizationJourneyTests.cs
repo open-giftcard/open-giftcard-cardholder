@@ -71,6 +71,10 @@ public sealed class LocalizationJourneyTests : IDisposable
         Assert.Contains("<html lang=\"en\" ", html, StringComparison.Ordinal);
         Assert.Contains("<h1>Sign in</h1>", html, StringComparison.Ordinal);
         Assert.DoesNotContain("<h1>Giriş yap</h1>", html, StringComparison.Ordinal);
+
+        var english = html.IndexOf("name=\"culture\" value=\"en\"", StringComparison.Ordinal);
+        var turkish = html.IndexOf("name=\"culture\" value=\"tr\"", StringComparison.Ordinal);
+        Assert.True(english >= 0 && english < turkish, "English must be the first language choice.");
     }
 
     [Fact]
@@ -92,12 +96,10 @@ public sealed class LocalizationJourneyTests : IDisposable
         Assert.Contains("<html lang=\"tr\" ", rawHtml, StringComparison.Ordinal);
         Assert.Contains("<h1>Giriş yap</h1>", html, StringComparison.Ordinal);
 
-        // The chip names the language in force, tagged as that language, and
-        // says what pressing it does only through its accessible name. Labelling
-        // a Turkish page "English" read as a claim that the page was English.
-        Assert.Contains("<span lang=\"tr\" aria-hidden=\"true\">Türkçe</span>", html, StringComparison.Ordinal);
-        Assert.Contains("English diline geç", html, StringComparison.Ordinal);
-        Assert.DoesNotContain(">English</span>", html, StringComparison.Ordinal);
+        Assert.Contains("<span lang=\"tr\">Türkçe</span>", html, StringComparison.Ordinal);
+        Assert.Contains("name=\"culture\" value=\"en\"", html, StringComparison.Ordinal);
+        Assert.Contains("name=\"culture\" value=\"tr\"", html, StringComparison.Ordinal);
+        Assert.Contains("aria-pressed=\"true\"", html, StringComparison.Ordinal);
     }
 
     [Fact]

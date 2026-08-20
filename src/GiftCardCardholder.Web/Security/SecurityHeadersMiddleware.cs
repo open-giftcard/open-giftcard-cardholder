@@ -1,17 +1,23 @@
+using GiftCardCardholder.Web.Configuration;
+using Microsoft.Extensions.Options;
+
 namespace GiftCardCardholder.Web.Security;
 
 /// <summary>
 /// Applies conservative response security headers.
 ///
-/// The application ships no JavaScript and loads nothing from another origin,
-/// so the policy can be strict without an allowlist. <c>Referrer-Policy:
-/// no-referrer</c> matters especially here: a recipient's activation link
-/// carries a single-use secret in its query string, and no-referrer guarantees
-/// it cannot leak through an outbound request.
+/// JavaScript enhancements are disabled by default. When an operator enables
+/// them, only scripts from this application origin are permitted; inline and
+/// third-party script remain blocked. <c>Referrer-Policy: no-referrer</c>
+/// matters especially here: a recipient's activation link carries a single-use
+/// secret in its query string, and no-referrer guarantees it cannot leak through
+/// an outbound request.
 /// </summary>
-internal sealed class SecurityHeadersMiddleware(RequestDelegate next)
+internal sealed class SecurityHeadersMiddleware(
+    RequestDelegate next,
+    IOptions<CardholderUiOptions> uiOptions)
 {
-    private const string ContentSecurityPolicy =
+    private const string ContentSecurityPolicyWithoutScripts =
         "default-src 'self'; " +
         "script-src 'none'; " +
         "style-src 'self'; " +
@@ -24,6 +30,13 @@ internal sealed class SecurityHeadersMiddleware(RequestDelegate next)
         "base-uri 'none'; " +
         "object-src 'none'";
 
+    private readonly string contentSecurityPolicy = uiOptions.Value.EnableJavaScriptEnhancements
+        ? ContentSecurityPolicyWithoutScripts.Replace(
+            "script-src 'none'",
+            "script-src 'self'",
+            StringComparison.Ordinal)
+        : ContentSecurityPolicyWithoutScripts;
+
     public Task InvokeAsync(HttpContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -32,11 +45,11 @@ internal sealed class SecurityHeadersMiddleware(RequestDelegate next)
         var isPaymentStatus = context.Request.Path.Value?
             .EndsWith("/pay/status", StringComparison.OrdinalIgnoreCase) == true;
         headers["Content-Security-Policy"] = isPaymentStatus
-            ? ContentSecurityPolicy.Replace(
+            ? contentSecurityPolicy.Replace(
                 "frame-ancestors 'none'",
                 "frame-ancestors 'self'",
                 StringComparison.Ordinal)
-            : ContentSecurityPolicy;
+            : contentSecurityPolicy;
         headers["X-Content-Type-Options"] = "nosniff";
         headers["Referrer-Policy"] = "no-referrer";
         headers["X-Frame-Options"] = isPaymentStatus ? "SAMEORIGIN" : "DENY";
