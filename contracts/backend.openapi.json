@@ -4144,6 +4144,78 @@
         }
       }
     },
+    "/api/v1/pos/balance-inquiries": {
+      "post": {
+        "tags": [
+          "Payments"
+        ],
+        "summary": "Reads what a presented card can spend, reserving nothing.",
+        "description": "Answers the question a cashier is asked before splitting a tender. Requires a live presented credential, so it cannot be used to sweep balances, and deliberately does not consume it, so asking does not cost the customer the code they are about to pay with. Returns the amount spendable now, which excludes value held by a share or another till. Unknown, expired, and consumed credentials are refused identically. It is a POST because the credential travels in the body: a query string would put a payment credential into logs and history.",
+        "operationId": "InquirePaymentBalance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentBalanceInquiryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentBalanceInquiryResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/pos/payment-provisions": {
       "post": {
         "tags": [
@@ -7048,6 +7120,13 @@
           "posTransactionReference": {
             "type": "string",
             "nullable": true
+          },
+          "allowPartialApproval": {
+            "type": "boolean"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -8834,6 +8913,42 @@
         "type": "integer",
         "format": "int32"
       },
+      "PaymentBalanceInquiryRequest": {
+        "type": "object",
+        "properties": {
+          "paymentToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentBalanceInquiryResult": {
+        "type": "object",
+        "properties": {
+          "giftCardPublicReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "availableAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiresAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "PaymentProvisionResult": {
         "type": "object",
         "properties": {
@@ -8850,6 +8965,14 @@
             "nullable": true
           },
           "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "requestedAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "outstandingAmount": {
             "type": "number",
             "format": "double"
           },

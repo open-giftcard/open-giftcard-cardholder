@@ -84,10 +84,15 @@ Then start this application in another window:
 
 ```powershell
 $env:ConnectionStrings__Cardholder = "Host=localhost;Port=5432;Database=giftcard_cardholder;Username=giftcard_cardholder_app;Password=<yours>"
+$env:ConnectionStrings__CardholderMigrations = "Host=localhost;Port=5432;Database=giftcard_cardholder;Username=giftcard_cardholder_migrator;Password=<migration password>"
+dotnet run --project src\GiftCardCardholder.Web -- --migrate
+$env:ConnectionStrings__CardholderMigrations = $null
 dotnet run --project src\GiftCardCardholder.Web
 ```
 
-Open `http://localhost:5180`. The application creates its three tables on startup.
+Open `http://localhost:5180`. Normal startup never creates or alters tables.
+Run the explicit migration command before each application upgrade; it is
+checksum-protected and safe to repeat.
 Set `Backend:BaseUrl` if the backend is not on `http://localhost:5143`.
 
 Production must supply a durable, protected `DataProtection:KeysPath` and serve

@@ -3,11 +3,11 @@
 `backend.openapi.json` was captured from the authoritative public backend:
 
 - Repository: https://github.com/open-giftcard/open-giftcard
-- Branch: `main`
-- Commit: `e7bff3e0d39e1c24b89a6d39612ad5939d87f6e5`
+- Branch: `feat/durable-data-protection`
+- Commit: `f80bab86c63106c9ba4669bedc1850c0dec2a6cb`
 - Endpoint: `/swagger/v1/swagger.json`
 - SHA-256:
-  `59B7B452E734A4411836342FDF4B0A24F20AD446D235C5F6BF4FA6E5DC2F6FE6`
+  `20BB4B338EE6FCA3A72146F8AA71D0F0644FEAE5816C610B08CAB9971C424B43`
 
 That public commit was rebuilt and its served OpenAPI document was verified to
 have exactly the SHA-256 recorded above. Later backend changes do not silently

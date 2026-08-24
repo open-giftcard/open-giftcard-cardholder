@@ -40,7 +40,7 @@ Before publishing:
 ## Releases
 
 Create no standalone cardholder tag. A release must use one semantic version
-across the public cardholder, backend, and portal repositories and record the
-reviewed commit triplet. Deployment certification is separate from tagging and
-must follow [DEPLOYMENT.md](DEPLOYMENT.md) and
+across the public cardholder, backend, portal, and POS repositories and record
+the reviewed four-repository commit manifest. Deployment certification is
+separate from tagging and must follow [DEPLOYMENT.md](DEPLOYMENT.md) and
 [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md).

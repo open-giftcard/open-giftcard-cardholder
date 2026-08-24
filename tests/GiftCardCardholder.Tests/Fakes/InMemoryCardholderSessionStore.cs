@@ -23,8 +23,6 @@ internal sealed class InMemoryCardholderSessionStore : ICardholderSessionStore
     public Task<bool> IsReadyAsync(CancellationToken cancellationToken) =>
         Task.FromResult(IsReady);
 
-    public Task InitializeAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
     public Task CreateSessionAsync(
         StoredSession session,
         string cookieHash,

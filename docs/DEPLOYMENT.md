@@ -29,6 +29,8 @@ AllowedHosts=card.<your-domain>
 Backend__BaseUrl=https://api.<your-domain>
 Backend__TimeoutSeconds=30
 ConnectionStrings__Cardholder=Host=<host>;Port=5432;Database=<cardholder-db>;Username=<cardholder-role>;Password=<secret>;SSL Mode=Require
+# Set only in the migration job, never in the long-running application.
+ConnectionStrings__CardholderMigrations=Host=<host>;Port=5432;Database=<cardholder-db>;Username=<cardholder-migration-owner>;Password=<secret>;SSL Mode=Require
 DataProtection__KeysPath=<absolute-persistent-key-volume>
 
 CardholderSession__SessionCookieName=__Host-cardholder-session
@@ -54,20 +56,28 @@ that every journey work from the server-rendered HTML alone.
 
 ## PostgreSQL and schema ownership
 
-Use a dedicated database and role. Never reuse a backend/portal database or
-role, and never run the application as a PostgreSQL superuser.
-
-At present the runtime initializes and evolves its own three tables:
+Use a dedicated database with separate migration-owner and runtime roles. Never
+reuse a backend/portal database or role, and never run either process as a
+PostgreSQL superuser. The migration owner owns these tables:
 
 - `cardholder_sessions`
 - `cardholder_activations`
 - `cardholder_payment_credentials`
 
-The runtime role therefore needs the DDL and DML permissions required to create
-and alter those tables in its own schema. This bootstrap approach is suitable
-for a reference deployment but is a production-readiness limitation: a managed
-migration step and a reduced-privilege runtime role should replace it before a
-high-assurance deployment.
+Before starting the candidate, run the published application once as a bounded
+migration job:
+
+```powershell
+$env:ConnectionStrings__Cardholder = '<runtime connection>'
+$env:ConnectionStrings__CardholderMigrations = '<migration owner connection>'
+dotnet GiftCardCardholder.Web.dll --migrate
+```
+
+Do not provide `ConnectionStrings__CardholderMigrations` to the long-running
+application. Normal startup performs no DDL and readiness returns 503 when the
+managed schema is absent. The migrator serializes with a PostgreSQL advisory
+lock, records a checksum-protected migration ledger, revokes public schema
+creation, and grants the runtime login only schema usage and table DML.
 
 Back up the database and test restoration. A rollback must preserve both this
 database and the Data Protection key ring or active sessions and activation
@@ -113,8 +123,8 @@ secret filtering, metrics, and incident response.
 
 Before exposing recipients:
 
-1. Record the exact public commits of cardholder, backend, and portal and verify
-   the pinned contract hash.
+1. Record the exact public commits of cardholder, backend, portal, and POS and
+   verify the pinned contract hash against the coordinated release manifest.
 2. Verify TLS, HSTS, secure `__Host-` cookies, antiforgery, CSP, `no-store`, and
    both health endpoints.
 3. Complete new/existing activation, sign-in, cards/history/lifecycle, all share

@@ -1,8 +1,7 @@
 namespace GiftCardCardholder.Web.Sessions;
 
 /// <summary>
-/// Creates the session tables on startup and periodically removes rows that can
-/// no longer be used. Expired sessions hold encrypted tokens the backend has
+/// Periodically removes rows that can no longer be used. Expired sessions hold encrypted tokens the backend has
 /// already invalidated, so deleting them removes useless material rather than
 /// business history.
 /// </summary>
@@ -27,8 +26,6 @@ internal sealed partial class SessionStoreMaintenanceService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await store.InitializeAsync(stoppingToken);
-
         using var timer = new PeriodicTimer(SweepInterval);
         do
         {

@@ -11,17 +11,19 @@ if ([string]::IsNullOrWhiteSpace($BackendRepository)) {
     $BackendRepository = Join-Path $PSScriptRoot '..\..\open-giftcard'
 }
 
-$expectedBranch = 'main'
-$expectedCommit = 'cfee9b1e17ab501e912d8aa8f84136d28e50dc6f'
 $backendDatabase = 'giftcard_cardholder_e2e_backend'
 $backendMigrator = 'giftcard_cardholder_e2e_migrator'
 $backendApp = 'giftcard_cardholder_e2e_app'
 $sessionDatabase = 'giftcard_cardholder_e2e_sessions'
+$sessionMigrator = 'giftcard_cardholder_e2e_sessions_migrator'
 $sessionApp = 'giftcard_cardholder_e2e_sessions_app'
 $backendPort = 5145
 $cardholderPort = 5184
 
 $cardholderRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$releaseContract = Get-Content -Raw -LiteralPath (
+    Join-Path $cardholderRoot 'RELEASE_COMPATIBILITY.json') | ConvertFrom-Json
+$expectedCommit = [string]$releaseContract.backendContract.commit
 $backendRoot = (Resolve-Path $BackendRepository).Path
 if ([string]::IsNullOrWhiteSpace($BackendEnvironmentFile)) {
     $BackendEnvironmentFile = Join-Path $backendRoot '.env'
@@ -323,6 +325,7 @@ foreach ($name in @(
     $backendMigrator,
     $backendApp,
     $sessionDatabase,
+    $sessionMigrator,
     $sessionApp
 )) {
     Assert-DisposableName $name
@@ -338,10 +341,9 @@ if (!(Get-Command dotnet-ef -ErrorAction SilentlyContinue)) {
     throw 'The dotnet-ef global tool is required for the guarded E2E run.'
 }
 
-$actualBranch = (& git -C $backendRoot branch --show-current).Trim()
 $actualCommit = (& git -C $backendRoot rev-parse HEAD).Trim()
-if ($actualBranch -ne $expectedBranch -or $actualCommit -ne $expectedCommit) {
-    throw "Backend must be $expectedBranch at $expectedCommit. Found $actualBranch at $actualCommit."
+if ($actualCommit -ne $expectedCommit) {
+    throw "Backend must be at accepted commit $expectedCommit. Found $actualCommit."
 }
 $sourceChanges = & git -C $backendRoot status --short -- src
 if ($sourceChanges) {
@@ -359,6 +361,7 @@ if ([string]::IsNullOrWhiteSpace($administrator) -or
 $backendPassword = [Guid]::NewGuid().ToString('N')
 $migratorPassword = [Guid]::NewGuid().ToString('N')
 $sessionPassword = [Guid]::NewGuid().ToString('N')
+$sessionMigratorPassword = [Guid]::NewGuid().ToString('N')
 $jwtKey = "{0}{1}" -f [Guid]::NewGuid().ToString('N'), [Guid]::NewGuid().ToString('N')
 $bootstrapSecret = "{0}{1}" -f [Guid]::NewGuid().ToString('N'), [Guid]::NewGuid().ToString('N')
 $platformEmail = 'cardholder.platform.e2e@example.test'
@@ -393,6 +396,7 @@ DROP DATABASE IF EXISTS $sessionDatabase;
 DROP ROLE IF EXISTS $backendApp;
 DROP ROLE IF EXISTS $backendMigrator;
 DROP ROLE IF EXISTS $sessionApp;
+DROP ROLE IF EXISTS $sessionMigrator;
 "@
     Invoke-Psql 'postgres' $administrator $administratorPassword $dropSql
 
@@ -403,8 +407,10 @@ CREATE ROLE $backendApp LOGIN PASSWORD '$backendPassword'
     NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
 CREATE ROLE $sessionApp LOGIN PASSWORD '$sessionPassword'
     NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
+CREATE ROLE $sessionMigrator LOGIN PASSWORD '$sessionMigratorPassword'
+    NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
 CREATE DATABASE $backendDatabase OWNER $backendMigrator;
-CREATE DATABASE $sessionDatabase OWNER $sessionApp;
+CREATE DATABASE $sessionDatabase OWNER $sessionMigrator;
 "@
     Invoke-Psql 'postgres' $administrator $administratorPassword $createSql
 
@@ -624,6 +630,12 @@ ALTER DEFAULT PRIVILEGES FOR ROLE $backendMigrator IN SCHEMA payments
 
     $env:ConnectionStrings__Cardholder =
         "Host=localhost;Port=5432;Database=$sessionDatabase;Username=$sessionApp;Password=$sessionPassword"
+    $env:ConnectionStrings__CardholderMigrations =
+        "Host=localhost;Port=5432;Database=$sessionDatabase;Username=$sessionMigrator;Password=$sessionMigratorPassword"
+    & dotnet $cardholderAssembly --migrate
+    if ($LASTEXITCODE -ne 0) {
+        throw 'Cardholder session database migration failed.'
+    }
     $env:Backend__BaseUrl = "http://127.0.0.1:$backendPort"
     $env:DataProtection__KeyPath = $keyRoot
     $env:ASPNETCORE_URLS = "http://127.0.0.1:$cardholderPort"
@@ -1150,6 +1162,7 @@ DROP DATABASE IF EXISTS $sessionDatabase;
 DROP ROLE IF EXISTS $backendApp;
 DROP ROLE IF EXISTS $backendMigrator;
 DROP ROLE IF EXISTS $sessionApp;
+DROP ROLE IF EXISTS $sessionMigrator;
 "@
         Invoke-Psql 'postgres' $administrator $administratorPassword $cleanupSql
     }

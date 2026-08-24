@@ -21,9 +21,25 @@ namespace GiftCardCardholder.Web;
 /// </summary>
 public partial class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        if (CardholderDatabaseMigrator.IsRequested(args))
+        {
+            try
+            {
+                await CardholderDatabaseMigrator.RunAsync(
+                    builder.Configuration,
+                    CancellationToken.None);
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine($"cardholder migration failed: {exception.Message}");
+                Environment.ExitCode = 1;
+            }
+            return;
+        }
+
         var isDevelopment = builder.Environment.IsDevelopment();
         var knownProxyAddresses = DeploymentSafety.ReadKnownProxies(builder.Configuration);
 

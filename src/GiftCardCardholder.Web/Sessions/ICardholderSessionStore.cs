@@ -11,8 +11,6 @@ internal interface ICardholderSessionStore
 {
     Task<bool> IsReadyAsync(CancellationToken cancellationToken);
 
-    Task InitializeAsync(CancellationToken cancellationToken);
-
     Task CreateSessionAsync(
         StoredSession session,
         string cookieHash,

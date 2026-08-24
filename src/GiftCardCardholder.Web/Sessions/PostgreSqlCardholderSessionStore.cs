@@ -13,53 +13,6 @@ namespace GiftCardCardholder.Web.Sessions;
 internal sealed class PostgreSqlCardholderSessionStore(NpgsqlDataSource dataSource)
     : ICardholderSessionStore
 {
-    private const string Schema = """
-        create table if not exists cardholder_sessions (
-            id uuid primary key,
-            cookie_hash text not null unique,
-            user_id uuid not null,
-            access_token text not null,
-            refresh_token text not null,
-            access_expires_at_utc timestamptz not null,
-            refresh_expires_at_utc timestamptz not null,
-            created_at_utc timestamptz not null,
-            last_seen_at_utc timestamptz not null
-        );
-
-        create index if not exists ix_cardholder_sessions_refresh_expiry
-            on cardholder_sessions (refresh_expires_at_utc);
-
-        create table if not exists cardholder_activations (
-            id uuid primary key,
-            cookie_hash text not null unique,
-            claim_token text not null,
-            idempotency_key text not null,
-            purpose text not null default 'GiftCardDistribution',
-            created_at_utc timestamptz not null,
-            expires_at_utc timestamptz not null
-        );
-
-        alter table cardholder_activations
-            add column if not exists purpose text not null default 'GiftCardDistribution';
-
-        create index if not exists ix_cardholder_activations_expiry
-            on cardholder_activations (expires_at_utc);
-
-        create table if not exists cardholder_payment_credentials (
-            payment_token_id uuid primary key,
-            session_id uuid not null,
-            gift_card_id uuid not null,
-            public_reference text not null,
-            raw_token text not null,
-            numeric_code text not null,
-            issued_at_utc timestamptz not null,
-            expires_at_utc timestamptz not null
-        );
-
-        create index if not exists ix_cardholder_payment_credentials_expiry
-            on cardholder_payment_credentials (expires_at_utc);
-        """;
-
     public async Task<bool> IsReadyAsync(CancellationToken cancellationToken)
     {
         try
@@ -77,12 +30,6 @@ internal sealed class PostgreSqlCardholderSessionStore(NpgsqlDataSource dataSour
         {
             return false;
         }
-    }
-
-    public async Task InitializeAsync(CancellationToken cancellationToken)
-    {
-        await using var command = dataSource.CreateCommand(Schema);
-        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task CreateSessionAsync(
