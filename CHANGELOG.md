@@ -12,6 +12,12 @@ usable and are not listed.
 
 ### Added
 
+- A `Dockerfile`, so the cardholder can be brought up alongside the API with
+  `docker compose -f docker-compose.yml -f docker-compose.full.yml up` from the
+  backend repository. It mirrors the backend image, with no front-end build step
+  because this application ships no JavaScript bundle by design. Not yet built:
+  the machine this was written on has no Docker.
+
 - Open Giftcard product identity throughout the rendered application and
   contributor documentation.
 - An English-first language catalogue and multi-option language menu, replacing
@@ -39,3 +45,14 @@ usable and are not listed.
   horizontal scrollbar at the narrowest supported phone width and at 200% zoom.
   The settings group now wraps and may shrink. The accessibility suite had been
   failing on every browser for some time before this.
+
+### Changed
+
+- **`RELEASE_COMPATIBILITY.json` no longer names tags that do not exist.** It
+  declared release `v0.5.0-rc.1` and gave all four components that tag, and no
+  repository has ever had a public tag. Schema version 2 adds a `development`
+  channel for that state, and on a released channel now requires the tag it
+  names to resolve locally. `scripts/Test-ReleaseContract.ps1` enforces both,
+  and additionally rejects a byte order mark or CRLF line endings, so the file
+  can be byte-identical in all four repositories. It had been CRLF in the
+  backend and LF in the other three.
