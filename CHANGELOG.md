@@ -48,7 +48,7 @@ usable and are not listed.
 
 ### Changed
 
-- **`RELEASE_COMPATIBILITY.json` no longer names tags that do not exist.** It
+- `RELEASE_COMPATIBILITY.json` no longer names tags that do not exist. It
   declared release `v0.5.0-rc.1` and gave all four components that tag, and no
   repository has ever had a public tag. Schema version 2 adds a `development`
   channel for that state, and on a released channel now requires the tag it
