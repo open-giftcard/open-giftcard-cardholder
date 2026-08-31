@@ -10,7 +10,9 @@ There is no bounty and no formal response-time commitment.
 
 ## Supported versions
 
-There is no released version yet. `main` is the only branch that receives fixes.
+`v0.9.0` is the current release and the only supported version. `main` is
+where fixes land, and a fix reaches you in the next tag rather than by
+backport.
 
 ## Where the boundary is
 
